@@ -545,7 +545,7 @@ class TranscriptionPanel:
             with concurrent.futures.ProcessPoolExecutor(
                 max_workers=worker_count,
                 initializer=_worker_init,
-                initargs=(model_path, device_str),
+                initargs=(model_path, device_str, mp_queue),
             ) as pool:
                 # Submit ALL files upfront for true parallelism (TRANS-04)
                 future_to_iid: dict[concurrent.futures.Future, tuple[str, str]] = {}
@@ -561,7 +561,7 @@ class TranscriptionPanel:
                         "message": _("log.file_processing").format(filename=Path(filepath).name),
                         "tag": "info",
                     })
-                    future = pool.submit(transcribe_file, filepath, mp_queue, iid)
+                    future = pool.submit(transcribe_file, filepath, iid)
                     future_to_iid[future] = (iid, filepath)
 
                 # Drain results as they complete

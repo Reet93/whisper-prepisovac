@@ -7,11 +7,13 @@ from pathlib import Path
 from src.whisperai.core.vad import preprocess_audio
 
 _model = None  # Module-level; set once per worker by _worker_init
+_progress_queue = None  # Module-level; set once per worker by _worker_init
 
 
-def _worker_init(model_path: str, device: str) -> None:
+def _worker_init(model_path: str, device: str, progress_queue) -> None:
     """ProcessPoolExecutor initializer. Loads Whisper model once per worker process."""
-    global _model
+    global _model, _progress_queue
+    _progress_queue = progress_queue
     _model = whisper.load_model(
         "medium",
         device=device,
@@ -21,14 +23,12 @@ def _worker_init(model_path: str, device: str) -> None:
 
 def transcribe_file(
     audio_path: str,
-    progress_queue,  # multiprocessing.Queue — cannot type-hint without import
     task_id: str,
 ) -> dict:
     """Transcribe one audio file with VAD preprocessing and progress reporting.
 
     Args:
         audio_path: Path to the audio file.
-        progress_queue: multiprocessing.Queue for sending progress messages back to dispatcher.
         task_id: Unique identifier for this file in the queue (used for UI updates).
 
     Returns:
@@ -42,7 +42,7 @@ def transcribe_file(
 
     # Step 1: VAD preprocessing — strip silence (D-19)
     speech_tensor, vad_stats = preprocess_audio(audio_path)
-    progress_queue.put({
+    _progress_queue.put({
         "type": "vad_done",
         "task_id": task_id,
         "vad_stats": vad_stats,
@@ -70,7 +70,7 @@ def transcribe_file(
         class _ProgressTqdm(tqdm_module.tqdm):
             def update(self, n=1):
                 super().update(n)
-                progress_queue.put({
+                _progress_queue.put({
                     "type": "progress",
                     "task_id": task_id,
                     "n": self.n,
