@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-03-28T11:47:19.517Z"
+stopped_at: Checkpoint 02-04-PLAN.md — awaiting human verification
+last_updated: "2026-03-28T11:50:23.607Z"
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -51,6 +51,7 @@ Plan: 4 of 4
 | Phase 02 P01 | 5 | 2 tasks | 5 files |
 | Phase 02-core-transcription P02 | 194 | 2 tasks | 6 files |
 | Phase 02-core-transcription P03 | 2 | 3 tasks | 2 files |
+| Phase 02 P04 | 10 | 0 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,7 @@ Recent decisions affecting current work:
 - [Phase 02-core-transcription]: ffprobe duration probing runs in background thread with root.after for thread-safe UI update
 - [Phase 02-core-transcription]: set_transcribing() no longer manages _running state — dispatcher owns _running to avoid double-setting conflicts
 - [Phase 02-core-transcription]: Two-queue pattern: multiprocessing.Queue for worker->drain thread, queue.Queue for drain->main thread — required because multiprocessing.Queue cannot be polled by root.after
+- [Phase 02-core-transcription]: ScrolledText import path corrected to ttkbootstrap.widgets.scrolled — ttkbootstrap.scrolledtext does not exist in v1.20.2
 
 ### Pending Todos
 
@@ -88,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T11:47:19.512Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-03-28T11:50:14.994Z
+Stopped at: Checkpoint 02-04-PLAN.md — awaiting human verification
 Resume file: None

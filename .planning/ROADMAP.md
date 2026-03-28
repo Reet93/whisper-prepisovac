@@ -49,7 +49,7 @@ Plans:
 - [x] 02-01-PLAN.md — Core backend: GPU detection, VAD preprocessing, Whisper transcriber worker
 - [x] 02-02-PLAN.md — TranscriptionPanel UI: Treeview, toolbar, action bar, log panel, i18n strings
 - [x] 02-03-PLAN.md — Integration: dispatcher thread, queue drain, progress/error handling, file output
-- [ ] 02-04-PLAN.md — Human verification: end-to-end transcription flow
+- [x] 02-04-PLAN.md — Human verification: end-to-end transcription flow
 **UI hint**: yes
 
 ### Phase 3: Claude Cleanup + Settings
