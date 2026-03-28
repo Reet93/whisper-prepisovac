@@ -89,6 +89,9 @@ msgstr "Device: Apple MPS (Apple Silicon)"
 msgid "log.device_cpu"
 msgstr "No GPU available, using CPU"
 
+msgid "log.folder_no_audio"
+msgstr "Folder \"{folder}\" contains no audio files (.mp3, .wav, .m4a, .ogg)"
+
 msgid "log.file_added"
 msgstr "File added: {filename}"
 

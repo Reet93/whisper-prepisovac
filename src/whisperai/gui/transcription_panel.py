@@ -458,9 +458,18 @@ class TranscriptionPanel:
         if not folder:
             return
         folder_path = Path(folder)
-        for file_path in sorted(folder_path.glob("*")):
-            if file_path.suffix.lower() in self.AUDIO_EXTENSIONS:
-                self.add_file(file_path)
+        audio_files = sorted(
+            f for f in folder_path.glob("*")
+            if f.suffix.lower() in self.AUDIO_EXTENSIONS
+        )
+        if not audio_files:
+            self.append_log(
+                _("log.folder_no_audio").format(folder=folder_path.name),
+                "info",
+            )
+            return
+        for file_path in audio_files:
+            self.add_file(file_path)
 
     def _on_remove_selected(self) -> None:
         """Remove selected waiting rows from the queue (no-op for processing rows)."""

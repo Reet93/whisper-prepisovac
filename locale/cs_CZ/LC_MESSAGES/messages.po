@@ -89,6 +89,9 @@ msgstr "Zařízení: Apple MPS (Apple Silicon)"
 msgid "log.device_cpu"
 msgstr "GPU nedostupné, používám CPU"
 
+msgid "log.folder_no_audio"
+msgstr "Složka „{folder}" neobsahuje žádné zvukové soubory (.mp3, .wav, .m4a, .ogg)"
+
 msgid "log.file_added"
 msgstr "Přidán soubor: {filename}"
 
