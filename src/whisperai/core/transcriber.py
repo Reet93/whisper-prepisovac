@@ -78,22 +78,30 @@ def transcribe_file(
             vad_filter=False,  # We already did VAD
         )
 
-        # Collect segments and report progress
+        # Collect segments and report progress with ETA
+        import time
         text_parts = []
         total_duration = vad_stats["speech_duration_s"]
         last_reported_pct = -1
+        start_time = time.monotonic()
         for segment in segments:
             text_parts.append(segment.text)
             # Report progress every ~5% to avoid flooding the UI queue
             pct = int(segment.end / max(total_duration, 1) * 100)
             if pct >= last_reported_pct + 5:
                 last_reported_pct = pct
+                # Calculate ETA from elapsed time and progress
+                elapsed = time.monotonic() - start_time
+                eta_seconds = 0
+                if pct > 0:
+                    eta_seconds = int(elapsed / pct * (100 - pct))
                 _progress_queue.put({
                     "type": "progress",
                     "task_id": task_id,
                     "n": int(segment.end),
                     "total": int(total_duration),
                     "pct": min(pct, 100),
+                    "eta_seconds": eta_seconds,
                 })
 
         return {"text": " ".join(text_parts).strip(), "vad_stats": vad_stats}

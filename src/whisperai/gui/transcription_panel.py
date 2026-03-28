@@ -319,9 +319,11 @@ class TranscriptionPanel:
         if detail and iid in self._row_data:
             self._row_data[iid]["error_msg"] = detail
 
-    def update_row_progress(self, iid: str, n: int, total: int) -> None:
-        """Update status cell to show percentage progress for the active row."""
-        progress_text = f"{n}%" if total == 100 else f"{n}/{total}"
+    def update_row_progress(self, iid: str, pct: int, eta_str: str = "") -> None:
+        """Update status cell to show percentage and ETA for the active row."""
+        progress_text = f"{pct}%"
+        if eta_str:
+            progress_text += f" (~{eta_str})"
         current_values = list(self.tree.item(iid, "values"))
         current_values[3] = progress_text
         self.tree.item(iid, values=current_values, tags=("processing",))
@@ -690,11 +692,14 @@ class TranscriptionPanel:
             iid = msg["task_id"]
             n, total = msg["n"], msg["total"]
             pct = msg.get("pct", int(n / max(total, 1) * 100))
-            self.update_row_progress(iid, pct, 100)
-            self.append_log(
-                _("log.whisper_progress").format(pct=pct, n=n, total=total),
-                "progress",
-            )
+            eta = msg.get("eta_seconds", 0)
+            # Format ETA as M:SS
+            eta_str = f"{eta // 60}:{eta % 60:02d}" if eta > 0 else ""
+            self.update_row_progress(iid, pct, eta_str)
+            log_msg = _("log.whisper_progress").format(pct=pct, n=n, total=total)
+            if eta_str:
+                log_msg += f" — ~{eta_str}"
+            self.append_log(log_msg, "progress")
 
         elif msg_type == "status_update":
             iid = msg["iid"]
