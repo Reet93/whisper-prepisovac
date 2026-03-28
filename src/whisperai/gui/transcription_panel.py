@@ -4,7 +4,10 @@ Pure UI class. Transcription logic is wired by Plan 03's dispatcher.
 """
 from __future__ import annotations
 
+import concurrent.futures
 import json
+import multiprocessing
+import queue
 import subprocess
 import sys
 import threading
@@ -17,6 +20,7 @@ import ttkbootstrap as ttk
 from ttkbootstrap.scrolledtext import ScrolledText
 from ttkbootstrap.tooltip import ToolTip
 
+from src.whisperai.core.transcriber import transcribe_file, _worker_init
 from src.whisperai.utils.resource_path import get_resource_path
 
 
@@ -47,7 +51,23 @@ class TranscriptionPanel:
         self._row_data: dict[str, dict] = {}
         self._output_dir = tk.StringVar(value="")
         self._running = False
+        # Dispatcher state
+        self._ui_queue: queue.Queue = queue.Queue()  # In-process queue: dispatcher thread -> main thread
+        self._stop_event = threading.Event()
+        self._batch_files: list[tuple[str, str]] = []  # (iid, path) for current batch
+        self._batch_done_count = 0
+        self._batch_total = 0
         self._build_ui()
+
+        # Log GPU device at startup (D-17)
+        device_label = getattr(self.root, "_device_label", "CPU")
+        device_str = getattr(self.root, "_device_str", "cpu")
+        if device_str == "cuda":
+            self.append_log(_("log.device_cuda").format(name=device_label.replace("CUDA (", "").rstrip(")")), "device")
+        elif device_str == "mps":
+            self.append_log(_("log.device_mps"), "device")
+        else:
+            self.append_log(_("log.device_cpu"), "device")
 
     # ------------------------------------------------------------------
     # UI Construction
@@ -329,7 +349,6 @@ class TranscriptionPanel:
 
     def set_transcribing(self, active: bool) -> None:
         """Toggle UI between idle and transcribing states (button label, disable/enable)."""
-        self._running = active
         if active:
             self.btn_transcribe.configure(
                 text=_("ui.action.stop"),
@@ -463,9 +482,275 @@ class TranscriptionPanel:
             self._output_dir.set(folder)
 
     def _on_transcribe_click(self) -> None:
-        """Handle transcribe / stop button click. Plan 03 overrides this callback."""
-        # Default no-op — Plan 03 wires actual dispatch logic
-        pass
+        """Handle transcribe / stop button click."""
+        if self._running:
+            # Stop requested (D-12)
+            self._stop_event.set()
+            self.append_log(_("log.stop_requested"), "info")
+            return
+
+        waiting = self.get_waiting_files()
+        if not waiting:
+            return
+
+        self._running = True
+        self._stop_event.clear()
+        self._batch_files = waiting
+        self._batch_done_count = 0
+        self._batch_total = len(waiting)
+        self.set_transcribing(True)
+        self.update_overall_progress(0, self._batch_total)
+        self.append_log(_("log.batch_start").format(count=self._batch_total), "info")
+
+        # Start queue polling
+        self._start_queue_poll()
+
+        # Launch dispatcher in background thread
+        thread = threading.Thread(target=self._run_dispatch, daemon=True)
+        thread.start()
+
+    def _run_dispatch(self) -> None:
+        """Background thread: dispatches files to ProcessPoolExecutor workers."""
+        device_str = getattr(self.root, "_device_str", "cpu")
+        worker_count = getattr(self.root, "_worker_count", 1)
+        model_path = str(get_resource_path("models"))
+
+        mp_queue = multiprocessing.Queue()
+
+        # Drain thread: forward mp_queue messages to ui_queue
+        def drain_mp():
+            while True:
+                try:
+                    msg = mp_queue.get(timeout=0.2)
+                    if msg is None:
+                        break
+                    self._ui_queue.put(msg)
+                except Exception:
+                    if self._stop_event.is_set() and mp_queue.empty():
+                        break
+
+        drain_thread = threading.Thread(target=drain_mp, daemon=True)
+        drain_thread.start()
+
+        try:
+            with concurrent.futures.ProcessPoolExecutor(
+                max_workers=worker_count,
+                initializer=_worker_init,
+                initargs=(model_path, device_str),
+            ) as pool:
+                # Submit ALL files upfront for true parallelism (TRANS-04)
+                future_to_iid: dict[concurrent.futures.Future, tuple[str, str]] = {}
+                for iid, filepath in self._batch_files:
+                    # Mark as processing in UI
+                    self._ui_queue.put({
+                        "type": "status_update",
+                        "iid": iid,
+                        "status": "processing",
+                    })
+                    self._ui_queue.put({
+                        "type": "log",
+                        "message": _("log.file_processing").format(filename=Path(filepath).name),
+                        "tag": "info",
+                    })
+                    future = pool.submit(transcribe_file, filepath, mp_queue, iid)
+                    future_to_iid[future] = (iid, filepath)
+
+                # Drain results as they complete
+                for future in concurrent.futures.as_completed(future_to_iid):
+                    iid, filepath = future_to_iid[future]
+
+                    # Check stop event — cancel remaining pending futures
+                    if self._stop_event.is_set():
+                        # Cancel all futures that haven't started yet
+                        for pending_future in future_to_iid:
+                            if pending_future is not future and not pending_future.done():
+                                pending_future.cancel()
+                        # Revert un-started files to waiting
+                        remaining = []
+                        for f, (r_iid, r_path) in future_to_iid.items():
+                            if f.cancelled() or (f is not future and not f.done()):
+                                remaining.append((r_iid, r_path))
+                        if remaining:
+                            self._ui_queue.put({
+                                "type": "reverted",
+                                "files": remaining,
+                            })
+                        # Still process THIS completed future's result below
+                        # Then break out of the loop
+                        self._process_future_result(future, iid, filepath)
+                        break
+
+                    self._process_future_result(future, iid, filepath)
+
+        finally:
+            mp_queue.put(None)  # Signal drain thread to stop
+            drain_thread.join(timeout=5)
+            self._ui_queue.put({"type": "batch_complete"})
+
+    def _process_future_result(self, future: concurrent.futures.Future, iid: str, filepath: str) -> None:
+        """Process the result of a completed transcription future. Called from _run_dispatch thread."""
+        try:
+            result = future.result()
+
+            # Determine output path (D-08, D-09)
+            output_dir = self._output_dir.get()
+            source_path = Path(filepath)
+            if output_dir:
+                out_path = Path(output_dir) / (source_path.stem + "_prepis.txt")
+            else:
+                out_path = source_path.parent / (source_path.stem + "_prepis.txt")
+
+            # Save transcript (D-09: auto-save, UTF-8 encoding)
+            out_path.write_text(result["text"], encoding="utf-8")
+
+            self._ui_queue.put({
+                "type": "file_done",
+                "iid": iid,
+                "filepath": filepath,
+                "output_path": str(out_path),
+                "text": result["text"],
+            })
+
+        except Exception as exc:
+            error_str = str(exc)
+            # Classify error for user-friendly message (TRANS-06)
+            if "out of memory" in error_str.lower() or "cuda" in error_str.lower():
+                user_error = _("err.out_of_memory")
+            elif "no such file" in error_str.lower() or "not found" in error_str.lower():
+                user_error = _("err.file_not_found")
+            elif "invalid" in error_str.lower() or "format" in error_str.lower():
+                user_error = _("err.unsupported_format")
+            else:
+                user_error = _("err.generic")
+
+            self._ui_queue.put({
+                "type": "file_error",
+                "iid": iid,
+                "filepath": filepath,
+                "error": error_str,
+                "user_error": user_error,
+            })
+
+    def _get_row_tag(self, iid: str) -> str:
+        """Return the current tag of a row (waiting/processing/done/error)."""
+        try:
+            tags = self.tree.item(iid, "tags")
+            return tags[0] if tags else "waiting"
+        except Exception:
+            return "waiting"
+
+    def _start_queue_poll(self) -> None:
+        """Start polling the ui_queue for messages from the dispatcher thread."""
+        self._drain_ui_queue()
+
+    def _drain_ui_queue(self) -> None:
+        """Drain all pending ui_queue messages and schedule next poll if still running."""
+        try:
+            while True:
+                msg = self._ui_queue.get_nowait()
+                self._handle_ui_message(msg)
+        except queue.Empty:
+            pass
+        if self._running:
+            self.root.after(100, self._drain_ui_queue)
+
+    def _handle_ui_message(self, msg: dict) -> None:
+        """Process a message from the dispatcher thread. Always called in the main thread."""
+        msg_type = msg["type"]
+
+        if msg_type == "vad_done":
+            stats = msg["vad_stats"]
+            self.append_log(
+                _("log.vad_result").format(
+                    segments=stats["segment_count"],
+                    speech_s=stats["speech_duration_s"],
+                    total_s=stats["total_duration_s"],
+                ),
+                "info",
+            )
+
+        elif msg_type == "progress":
+            iid = msg["task_id"]
+            n, total = msg["n"], msg["total"]
+            self.update_row_progress(iid, n, total)
+            self.append_log(
+                _("log.whisper_progress").format(n=n, total=total),
+                "progress",
+            )
+
+        elif msg_type == "status_update":
+            iid = msg["iid"]
+            status = msg["status"]
+            if status == "processing":
+                self.update_row_status(iid, _("ui.status.processing"), "processing")
+
+        elif msg_type == "log":
+            self.append_log(msg["message"], msg.get("tag", "info"))
+
+        elif msg_type == "file_done":
+            iid = msg["iid"]
+            self.mark_row_done(iid)
+            self._row_data[iid]["result_text"] = msg["text"]
+            self._batch_done_count += 1
+            self.update_overall_progress(self._batch_done_count, self._batch_total)
+            self.append_log(
+                _("log.file_done").format(
+                    filename=Path(msg["filepath"]).name,
+                    output_path=msg["output_path"],
+                ),
+                "done",
+            )
+
+        elif msg_type == "file_error":
+            iid = msg["iid"]
+            self.mark_row_error(iid, msg["user_error"])
+            self._batch_done_count += 1
+            self.update_overall_progress(self._batch_done_count, self._batch_total)
+            self.append_log(
+                _("log.error").format(
+                    filename=Path(msg["filepath"]).name,
+                    error=msg["error"],
+                ),
+                "error",
+            )
+
+        elif msg_type == "reverted":
+            for iid, _ in msg["files"]:
+                self.update_row_status(iid, _("ui.status.waiting"), "waiting")
+
+        elif msg_type == "batch_complete":
+            self._running = False
+            self.set_transcribing(False)
+            if self._stop_event.is_set():
+                remaining = self._batch_total - self._batch_done_count
+                self.append_log(
+                    _("log.batch_stopped").format(done=self._batch_done_count, remaining=remaining),
+                    "info",
+                )
+            else:
+                self.append_log(
+                    _("log.batch_done").format(count=self._batch_done_count),
+                    "done",
+                )
+
+            # D-04: After batch completes, check if new waiting files were added during transcription.
+            # If so, automatically start a new batch for them.
+            new_waiting = self.get_waiting_files()
+            if new_waiting and not self._stop_event.is_set():
+                self.append_log(
+                    _("log.batch_start").format(count=len(new_waiting)),
+                    "info",
+                )
+                self._running = True
+                self._stop_event.clear()
+                self._batch_files = new_waiting
+                self._batch_done_count = 0
+                self._batch_total = len(new_waiting)
+                self.set_transcribing(True)
+                self.update_overall_progress(0, self._batch_total)
+                self._start_queue_poll()
+                thread = threading.Thread(target=self._run_dispatch, daemon=True)
+                thread.start()
 
     # ------------------------------------------------------------------
     # Treeview interaction callbacks
