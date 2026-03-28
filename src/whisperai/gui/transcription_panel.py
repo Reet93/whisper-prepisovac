@@ -17,7 +17,7 @@ from tkinter import filedialog
 import tkinter as tk
 
 import ttkbootstrap as ttk
-from ttkbootstrap.scrolledtext import ScrolledText
+from ttkbootstrap.widgets.scrolled import ScrolledText
 from ttkbootstrap.tooltip import ToolTip
 
 from src.whisperai.core.transcriber import transcribe_file, _worker_init
