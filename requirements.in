@@ -1,3 +1,6 @@
 ttkbootstrap==1.20.2
 faster-whisper>=1.1.0
 silero-vad
+anthropic==0.86.0
+keyring==25.7.0
+platformdirs==4.9.4
