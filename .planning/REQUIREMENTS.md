@@ -44,9 +44,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### User Interface
 
-- [ ] **UI-01**: Switchable UI language: Czech and English
-- [ ] **UI-02**: i18n string dictionary used from first widget — all labels translatable
-- [ ] **UI-03**: Modern-looking Tkinter GUI using ttkbootstrap theming
+- [x] **UI-01**: Switchable UI language: Czech and English
+- [x] **UI-02**: i18n string dictionary used from first widget — all labels translatable
+- [x] **UI-03**: Modern-looking Tkinter GUI using ttkbootstrap theming
 - [ ] **UI-04**: Settings panel for API key, output folder, parallel workers, language, GPU preference
 - [ ] **UI-05**: Persistent settings between sessions (output folder, language, worker count)
 
@@ -98,9 +98,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UI-01 | Phase 1 | Pending |
-| UI-02 | Phase 1 | Pending |
-| UI-03 | Phase 1 | Pending |
+| UI-01 | Phase 1 | Complete |
+| UI-02 | Phase 1 | Complete |
+| UI-03 | Phase 1 | Complete |
 | FILE-01 | Phase 2 | Pending |
 | FILE-02 | Phase 2 | Pending |
 | FILE-03 | Phase 2 | Pending |

@@ -12,7 +12,7 @@ Four phases from skeleton to distributable portable app. Phase 1 lays the archit
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Project skeleton, i18n infrastructure, ttkbootstrap window, and resource path abstraction
+- [x] **Phase 1: Foundation** - Project skeleton, i18n infrastructure, ttkbootstrap window, and resource path abstraction (completed 2026-03-28)
 - [ ] **Phase 2: Core Transcription** - File queue, Whisper transcription, GPU detection, real-time log, and file output — full MVP loop
 - [ ] **Phase 3: Claude Cleanup + Settings** - "Přepsat + Upravit" path, API key management, settings panel, persistent preferences, and parallel workers
 - [ ] **Phase 4: Packaging** - PyInstaller portable folder builds for Windows and macOS, verified on clean machines with no Python installed
@@ -28,9 +28,9 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. All visible strings are loaded through the i18n `_()` function — no hardcoded UI text anywhere
   3. Switching language between Czech and English changes all labels without restart (or on restart — either is acceptable at this stage)
   4. `get_resource_path()` resolves bundled asset paths correctly in both dev and frozen context
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
-- [ ] 01-01-PLAN.md — Project skeleton, i18n infrastructure, ttkbootstrap window with language switcher
+- [x] 01-01-PLAN.md — Project skeleton, i18n infrastructure, ttkbootstrap window with language switcher
 **UI hint**: yes
 
 ### Phase 2: Core Transcription
@@ -80,7 +80,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/1 | Planning complete | - |
+| 1. Foundation | 1/1 | Complete   | 2026-03-28 |
 | 2. Core Transcription | 0/TBD | Not started | - |
 | 3. Claude Cleanup + Settings | 0/TBD | Not started | - |
 | 4. Packaging | 0/TBD | Not started | - |
