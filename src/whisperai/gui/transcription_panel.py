@@ -510,7 +510,16 @@ class TranscriptionPanel:
 
     def _run_dispatch(self) -> None:
         """Background thread: dispatches files to ProcessPoolExecutor workers."""
-        from src.whisperai.core.transcriber import transcribe_file, _worker_init
+        try:
+            from src.whisperai.core.transcriber import transcribe_file, _worker_init
+        except ImportError as e:
+            self._ui_queue.put({
+                "type": "log",
+                "message": f"Transcription unavailable: {e}. Install whisper and torch.",
+                "tag": "error",
+            })
+            self._ui_queue.put({"type": "batch_complete"})
+            return
         device_str = getattr(self.root, "_device_str", "cpu")
         worker_count = getattr(self.root, "_worker_count", 1)
         model_path = str(get_resource_path("models"))
