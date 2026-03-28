@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 2 planned (4 plans, 3 waves)
-last_updated: "2026-03-28T11:35:09.041Z"
+status: Ready to execute
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-03-28T11:40:20.938Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 5
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-28)
 
 **Core value:** Reliable, one-click transcription of long Czech audio recordings into clean, structured text — no cloud dependency for core transcription
-**Current focus:** Phase 01 — foundation
+**Current focus:** Phase 02 — core-transcription
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
+Phase: 02 (core-transcription) — EXECUTING
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ Plan: Not started
 *Updated after each plan completion*
 | Phase 01 P01 | 112 | 2 tasks | 15 files |
 | Phase 01-foundation P01 | 112 | 3 tasks | 15 files |
+| Phase 02 P01 | 5 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: 4 parent traversals in get_resource_path() for src/whisperai/utils/ depth — UI-SPEC showed only 2 (corrected)
 - [Phase 01-foundation]: Language switcher shows restart notice on change; live reload deferred to Phase 3 (settings persistence)
 - [Phase 01-foundation]: Python 3.14 used for Phase 1 dev verification — Python 3.12 required before Phase 2 (Whisper/PyTorch)
+- [Phase 02]: torch not pinned in requirements.in — let openai-whisper handle transitive dep to avoid CUDA wheel conflicts
+- [Phase 02]: tqdm injection pattern for Whisper progress — no official callback API in whisper.transcribe()
 
 ### Pending Todos
 
@@ -79,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T11:35:09.037Z
-Stopped at: Phase 2 planned (4 plans, 3 waves)
-Resume file: .planning/phases/02-core-transcription/02-01-PLAN.md
+Last session: 2026-03-28T11:40:20.934Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: None
