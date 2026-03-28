@@ -20,7 +20,6 @@ import ttkbootstrap as ttk
 from ttkbootstrap.widgets.scrolled import ScrolledText
 from ttkbootstrap.tooltip import ToolTip
 
-from src.whisperai.core.transcriber import transcribe_file, _worker_init
 from src.whisperai.utils.resource_path import get_resource_path
 
 
@@ -511,6 +510,7 @@ class TranscriptionPanel:
 
     def _run_dispatch(self) -> None:
         """Background thread: dispatches files to ProcessPoolExecutor workers."""
+        from src.whisperai.core.transcriber import transcribe_file, _worker_init
         device_str = getattr(self.root, "_device_str", "cpu")
         worker_count = getattr(self.root, "_worker_count", 1)
         model_path = str(get_resource_path("models"))

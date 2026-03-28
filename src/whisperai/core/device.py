@@ -1,5 +1,4 @@
 """GPU device detection for Whisper transcription."""
-import torch
 
 
 def detect_device() -> tuple[str, str]:
@@ -8,6 +7,10 @@ def detect_device() -> tuple[str, str]:
     Checks CUDA first (Windows), then MPS (macOS), falls back to CPU.
     The human_label is used for log messages (D-17).
     """
+    try:
+        import torch
+    except ImportError:
+        return "cpu", "CPU"
     if torch.cuda.is_available():
         name = torch.cuda.get_device_name(0)
         return "cuda", f"CUDA ({name})"

@@ -1,5 +1,4 @@
 import ttkbootstrap as ttk
-from src.whisperai.core.device import detect_device, get_default_workers
 from src.whisperai.gui.main_window import MainWindow
 
 
@@ -17,6 +16,7 @@ def create_app(current_lang: str = "cs") -> None:
     root.deiconify()
 
     # GPU detection at startup (D-16, TRANS-02)
+    from src.whisperai.core.device import detect_device, get_default_workers
     device_str, device_label = detect_device()
     worker_count = get_default_workers(device_str)
     root._device_str = device_str
