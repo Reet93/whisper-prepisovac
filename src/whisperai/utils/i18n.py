@@ -4,6 +4,8 @@ import sys
 from .resource_path import get_resource_path
 
 _LOCALE_MAP = {"cs": "cs_CZ", "en": "en_US"}
+_CURRENT_LANGUAGE: str = "cs"
+_current_lang: str = "cs"  # Alias for external queries
 
 
 def detect_system_language() -> str:
@@ -33,12 +35,20 @@ def detect_system_language() -> str:
     return "en"
 
 
+def get_current_language() -> str:
+    """Return the currently active language code ('cs' or 'en')."""
+    return _CURRENT_LANGUAGE
+
+
 def set_language(lang_code: str) -> None:
     """Install _() into builtins for the selected language.
 
     lang_code: 'cs' or 'en'. Falls back to NullTranslations if .mo file not found.
     Must be called before any widget code runs.
     """
+    global _CURRENT_LANGUAGE, _current_lang
+    _CURRENT_LANGUAGE = lang_code
+    _current_lang = lang_code
     locale_dir = get_resource_path("locale")
     gettext.translation(
         "messages",
