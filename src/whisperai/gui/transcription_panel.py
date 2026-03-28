@@ -724,7 +724,7 @@ class TranscriptionPanel:
             )
 
         elif msg_type == "reverted":
-            for iid, _ in msg["files"]:
+            for iid, _path in msg["files"]:
                 self.update_row_status(iid, _("ui.status.waiting"), "waiting")
 
         elif msg_type == "batch_complete":
