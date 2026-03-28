@@ -51,7 +51,7 @@ metrics:
 |---|------|--------|--------|
 | 1 | Project skeleton, resource path, i18n, locale files | Done | ea0ae77 |
 | 2 | Entry point, window, layout, language switcher | Done | 60ae537 |
-| 3 | Verify running application | Checkpoint — awaiting human verify | — |
+| 3 | Verify running application | Approved by user | — |
 
 ## What Was Built
 

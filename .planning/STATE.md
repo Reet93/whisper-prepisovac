@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Executing Phase 01
-stopped_at: "Checkpoint: Task 3 human-verify for 01-01-PLAN.md"
-last_updated: "2026-03-28T10:22:29.008Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 01-01-PLAN.md — Phase 1 foundation done
+last_updated: "2026-03-28T10:32:52.963Z"
 progress:
   total_phases: 4
   completed_phases: 1
@@ -47,6 +47,7 @@ Plan: 1 of 1
 
 *Updated after each plan completion*
 | Phase 01 P01 | 112 | 2 tasks | 15 files |
+| Phase 01-foundation P01 | 112 | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -61,6 +62,9 @@ Recent decisions affecting current work:
 - Init: macOS codesigning scope (internal vs Apple Developer ID) must be resolved before Phase 4 planning
 - [Phase 01-foundation]: 4 parent traversals in get_resource_path() for src/whisperai/utils/ depth — corrected from UI-SPEC which showed 2 parents
 - [Phase 01-foundation]: Language switcher shows restart notice on change; live reload deferred to Phase 3 (settings persistence)
+- [Phase 01-foundation]: 4 parent traversals in get_resource_path() for src/whisperai/utils/ depth — UI-SPEC showed only 2 (corrected)
+- [Phase 01-foundation]: Language switcher shows restart notice on change; live reload deferred to Phase 3 (settings persistence)
+- [Phase 01-foundation]: Python 3.14 used for Phase 1 dev verification — Python 3.12 required before Phase 2 (Whisper/PyTorch)
 
 ### Pending Todos
 
@@ -75,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T10:22:19.144Z
-Stopped at: Checkpoint: Task 3 human-verify for 01-01-PLAN.md
+Last session: 2026-03-28T10:32:52.959Z
+Stopped at: Completed 01-01-PLAN.md — Phase 1 foundation done
 Resume file: None
