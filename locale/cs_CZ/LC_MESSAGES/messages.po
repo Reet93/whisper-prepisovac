@@ -1,0 +1,24 @@
+# Czech translations for Whisper Přepisovač
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: cs_CZ\n"
+
+msgid "app.title"
+msgstr "Whisper Přepisovač"
+
+msgid "ui.language_label"
+msgstr "Jazyk:"
+
+msgid "ui.language_cs"
+msgstr "Čeština"
+
+msgid "ui.language_en"
+msgstr "English"
+
+msgid "ui.placeholder"
+msgstr "Vítejte. Funkce přepisu budou přidány v dalších fázích."
+
+msgid "ui.language_changed_notice"
+msgstr "Jazyk byl změněn. Restartujte aplikaci pro použití změn."

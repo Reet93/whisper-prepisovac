@@ -1,0 +1,24 @@
+# English translations for Whisper Transcriber
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en_US\n"
+
+msgid "app.title"
+msgstr "Whisper Transcriber"
+
+msgid "ui.language_label"
+msgstr "Language:"
+
+msgid "ui.language_cs"
+msgstr "Czech"
+
+msgid "ui.language_en"
+msgstr "English"
+
+msgid "ui.placeholder"
+msgstr "Welcome. Transcription features will be added in later phases."
+
+msgid "ui.language_changed_notice"
+msgstr "Language changed. Restart the app to apply changes."
