@@ -139,3 +139,192 @@ msgstr "Nelze načíst délku souboru. Soubor může být poškozen."
 
 msgid "err.generic"
 msgstr "Chyba při přepisu. Podrobnosti v protokolu níže."
+
+msgid "settings.title"
+msgstr "Nastavení"
+
+msgid "settings.tab_general"
+msgstr "Obecné"
+
+msgid "settings.tab_claude"
+msgstr "Claude"
+
+msgid "settings.save"
+msgstr "Uložit nastavení"
+
+msgid "settings.cancel"
+msgstr "Zahodit změny"
+
+msgid "settings.reset_defaults"
+msgstr "Obnovit výchozí..."
+
+msgid "settings.language"
+msgstr "Jazyk:"
+
+msgid "settings.output_folder"
+msgstr "Výstupní složka:"
+
+msgid "settings.workers"
+msgstr "Paralelní pracovníci:"
+
+msgid "settings.gpu_info_gpu"
+msgstr "GPU režim: doporučen 1 pracovník (VRAM) — GPU je ~5× rychlejší než CPU"
+
+msgid "settings.gpu_info_cpu"
+msgstr "CPU režim: lze zvýšit počet pracovníků"
+
+msgid "settings.model"
+msgstr "Model:"
+
+msgid "settings.api_key"
+msgstr "API klíč:"
+
+msgid "settings.show_hide"
+msgstr "Zobrazit/Skrýt"
+
+msgid "settings.key_verifying"
+msgstr "Ověřuji..."
+
+msgid "settings.key_valid"
+msgstr "Klíč platný ✓"
+
+msgid "settings.key_invalid"
+msgstr "Neplatný klíč — zkontrolujte hodnotu"
+
+msgid "settings.rate_limit_guide"
+msgstr "Jak nastavit limity využití v Anthropic dashboardu ↗"
+
+msgid "settings.remove_key"
+msgstr "Odstranit API klíč"
+
+msgid "settings.remove_key_confirm"
+msgstr "Opravdu chcete odstranit API klíč? Tuto akci nelze vrátit."
+
+msgid "settings.default_prompt"
+msgstr "Výchozí prompt:"
+
+msgid "settings.edit_prompt"
+msgstr "Upravit prompt"
+
+msgid "settings.folder_not_found"
+msgstr "Složka neexistuje. Zvolte jinou."
+
+msgid "settings.tooltip"
+msgstr "Nastavení"
+
+msgid "reset.title"
+msgstr "Obnovit výchozí nastavení"
+
+msgid "reset.language"
+msgstr "Jazyk"
+
+msgid "reset.output_folder"
+msgstr "Výstupní složka (vyprázdnit)"
+
+msgid "reset.workers"
+msgstr "Počet pracovníků (1)"
+
+msgid "reset.prompt"
+msgstr "Výchozí prompt (obnovit výchozí soubor)"
+
+msgid "reset.profiles"
+msgstr "Profily kontextu (smazat vše)"
+
+msgid "reset.key_note"
+msgstr "API klíč — nelze obnovit (uložen v systémovém trezoru)"
+
+msgid "reset.apply"
+msgstr "Obnovit vybrané"
+
+msgid "reset.keep"
+msgstr "Ponechat stávající"
+
+msgid "banner.no_key"
+msgstr "Nastavte Claude API klíč pro čištění textu"
+
+msgid "banner.invalid_key"
+msgstr "Claude API klíč je neplatný nebo vypršel. Aktualizujte ho v nastavení."
+
+msgid "banner.setup"
+msgstr "Nastavit"
+
+msgid "ui.action.transcribe_edit"
+msgstr "Přepsat + Upravit"
+
+msgid "ui.action.edit_only"
+msgstr "Upravit"
+
+msgid "ui.action.no_key_tooltip"
+msgstr "Nejdříve nastavte API klíč Claude"
+
+msgid "ui.action.select_done_tooltip"
+msgstr "Vyberte dokončené soubory"
+
+msgid "ui.action.context_label"
+msgstr "Kontext:"
+
+msgid "ui.action.no_profile"
+msgstr "Žádný profil"
+
+msgid "ui.action.new_profile"
+msgstr "Nový profil..."
+
+msgid "ui.action.rename_profile"
+msgstr "Přejmenovat..."
+
+msgid "ui.action.delete_profile"
+msgstr "Smazat"
+
+msgid "ui.action.delete_profile_confirm"
+msgstr "Smazat profil '{name}'?"
+
+msgid "ui.action.toggle_prompt_show"
+msgstr "Upravit prompt ▸"
+
+msgid "ui.action.toggle_prompt_hide"
+msgstr "Skrýt prompt ▼"
+
+msgid "ui.action.prompt_label"
+msgstr "Prompt:"
+
+msgid "ui.action.reset_prompt"
+msgstr "Obnovit výchozí"
+
+msgid "ui.action.cost_estimate"
+msgstr "~${estimate} odhadovaná cena"
+
+msgid "ui.status.claude_error"
+msgstr "chyba (Claude)"
+
+msgid "log.claude_start"
+msgstr "Claude: čistím text pro {filename}..."
+
+msgid "log.claude_processing"
+msgstr "Claude: zpracovávám..."
+
+msgid "log.claude_chunk"
+msgstr "Claude: část {n}/{total}..."
+
+msgid "log.claude_slow"
+msgstr "Claude stále zpracovává... ({elapsed}s)"
+
+msgid "log.claude_done"
+msgstr "Claude: hotovo — {tokens} tokenů, ~${cost}"
+
+msgid "log.claude_error"
+msgstr "Claude: chyba — {reason}. Soubor _prepis.txt byl uložen."
+
+msgid "log.claude_no_key"
+msgstr "Claude API klíč není nastaven. Klikněte na banner a nastavte ho."
+
+msgid "log.claude_timeout"
+msgstr "Claude: časový limit překročen (300s). Zkuste soubor znovu."
+
+msgid "log.saved_collision"
+msgstr "Uloženo jako {filename} (soubor již existoval)"
+
+msgid "model.haiku"
+msgstr "claude-haiku-4-5 (rychlý/levný)"
+
+msgid "model.sonnet"
+msgstr "claude-sonnet-4-5 (vyvážený)"
