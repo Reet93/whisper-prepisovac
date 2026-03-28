@@ -13,24 +13,24 @@ Reliable, one-click transcription of long Czech audio recordings into clean, str
 ### Validated
 
 - [x] Switchable UI language: Czech / English — Validated in Phase 01: Foundation
+- [x] Add audio files individually or by folder (.mp3, .wav, .m4a, .ogg) — Validated in Phase 02: Core Transcription
+- [x] Display list of loaded recordings with status (čeká / zpracovává / hotovo) — Validated in Phase 02
+- [x] Transcribe audio using Whisper medium model with Czech language — Validated in Phase 02 (faster-whisper backend)
+- [x] Auto-detect GPU (CUDA on Windows, MPS on Mac) with CPU fallback — Validated in Phase 02
+- [x] Show detailed real-time processing log during transcription — Validated in Phase 02
+- [x] Configurable parallel file processing (1-N files simultaneously) — Validated in Phase 02
+- [x] "Přepsat" button — raw Whisper transcription only — Validated in Phase 02
+- [x] "Uložit jako" — save single file with dialog — Validated in Phase 02
+- [x] "Vybrat výstupní složku" — batch save with auto-naming (_prepis.txt) — Validated in Phase 02
 
 ### Active
-
-- [ ] Add audio files individually or by folder (.mp3, .wav, .m4a, .ogg)
-- [ ] Display list of loaded recordings with status (čeká / zpracovává / hotovo)
-- [ ] Transcribe audio using Whisper medium model with Czech language
-- [ ] Auto-detect GPU (CUDA on Windows, MPS on Mac) with CPU fallback
-- [ ] Show detailed real-time processing log during transcription
-- [ ] Configurable parallel file processing (1-N files simultaneously)
-- [ ] "Přepsat" button — raw Whisper transcription only
 - [ ] "Přepsat + Upravit" button — transcription + Claude API text cleanup
 - [ ] Claude API cleanup: grammar correction, paragraph structure, executive summary, comparison with original
 - [ ] Output 2 files: original transcript + edited version (with summary & diff)
 - [ ] Original transcript always preserved, never deleted or overwritten
-- [ ] "Uložit jako" — save single file with dialog
-- [ ] "Vybrat výstupní složku" — batch save with auto-naming (_prepis.txt / _upraveno.txt)
 - [ ] API key management: prompt on first use, store via Credential Manager (Win) / Keychain (Mac)
 - [ ] Option to skip Claude API setup entirely — app works without it
+- [ ] User-customizable Claude prompt (default shipped, users can load their own)
 
 - [ ] PyInstaller portable folder packaging for Windows and macOS
 - [ ] Bundle ffmpeg and Whisper medium model with the app
@@ -55,7 +55,7 @@ Reliable, one-click transcription of long Czech audio recordings into clean, str
 
 ## Constraints
 
-- **Tech stack**: Python + Tkinter for GUI, openai-whisper for transcription, anthropic SDK for Claude API
+- **Tech stack**: Python + Tkinter for GUI, faster-whisper (CTranslate2) for transcription, anthropic SDK for Claude API
 - **Packaging**: PyInstaller portable folder — must run without Python installed
 - **Dependencies**: ffmpeg and Whisper model bundled, not downloaded at runtime
 - **Security**: API keys stored in OS-native secure storage, never in plaintext files
@@ -70,7 +70,8 @@ Reliable, one-click transcription of long Czech audio recordings into clean, str
 | 2-file output (original + edited) | User wants original preserved + edited with summary & comparison in one file | — Pending |
 | OS-native key storage | Credential Manager (Win) / Keychain (Mac) — secure, no plaintext | — Pending |
 | Switchable i18n (CZ/EN) | Small team now, wider audience later — both languages needed | Implemented (Phase 01) |
-| Auto-detect GPU | CUDA/MPS when available, CPU fallback — best performance without config | — Pending |
+| Auto-detect GPU | CUDA/MPS when available, CPU fallback — best performance without config | Implemented (Phase 02) |
+| Switch to faster-whisper | 5x faster than openai-whisper, no hallucination loops, MIT licensed | Implemented (Phase 02) |
 | Cross-platform from start | User needs both Win + Mac — build for both from the beginning | — Pending |
 | UI/UX design before coding | User requested design contract via /gsd:ui-phase before implementation | Implemented (Phase 01) |
 
@@ -92,4 +93,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-28 after Phase 01 completion*
+*Last updated: 2026-03-28 after Phase 02 completion*
