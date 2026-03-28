@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 03-claude-cleanup-settings/03-01-PLAN.md
-last_updated: "2026-03-28T17:59:44.010Z"
+stopped_at: Completed 03-claude-cleanup-settings/03-02-PLAN.md
+last_updated: "2026-03-28T18:05:38.900Z"
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 9
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 ## Current Position
 
 Phase: 03 (claude-cleanup-settings) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Plan: 2 of 4
 | Phase 02-core-transcription P03 | 2 | 3 tasks | 2 files |
 | Phase 02 P04 | 10 | 0 tasks | 1 files |
 | Phase 03-claude-cleanup-settings P01 | 4 | 3 tasks | 9 files |
+| Phase 03-claude-cleanup-settings P02 | 25 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,8 @@ Recent decisions affecting current work:
 - [Phase 03-claude-cleanup-settings]: get_default_prompt uses resource_path for PyInstaller compat — prompts/ bundled via spec datas
 - [Phase 03-claude-cleanup-settings]: validate_api_key treats 429/529 as valid key (rate limited, not invalid)
 - [Phase 03-claude-cleanup-settings]: Both cs and en prompt files are identical — split exists for D-24 language-aware prompt switching
+- [Phase 03-claude-cleanup-settings]: SettingsDialog validates API key in background thread; dialog stays open on failure, closes after 1s on success
+- [Phase 03-claude-cleanup-settings]: app.py create_app() reads language from SettingsStore instead of param — persisted language applied from first frame
 
 ### Pending Todos
 
@@ -94,6 +97,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T17:59:44.006Z
-Stopped at: Completed 03-claude-cleanup-settings/03-01-PLAN.md
+Last session: 2026-03-28T18:05:38.895Z
+Stopped at: Completed 03-claude-cleanup-settings/03-02-PLAN.md
 Resume file: None
