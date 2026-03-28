@@ -13,7 +13,7 @@ import sys
 import threading
 from datetime import datetime
 from pathlib import Path
-from tkinter import filedialog
+from tkinter import filedialog, messagebox, simpledialog
 import tkinter as tk
 
 import ttkbootstrap as ttk
@@ -43,13 +43,16 @@ class TranscriptionPanel:
 
     AUDIO_EXTENSIONS = (".mp3", ".wav", ".m4a", ".ogg")
 
-    def __init__(self, parent: ttk.Frame, root: ttk.Window) -> None:
+    def __init__(self, parent: ttk.Frame, root: ttk.Window, settings=None) -> None:
         self.parent = parent
         self.root = root
+        self._settings = settings
         # iid -> {full_path, error_msg, result_text}
         self._row_data: dict[str, dict] = {}
         self._output_dir = tk.StringVar(value="")
         self._running = False
+        # Claude cleanup mode flag
+        self._claude_cleanup_mode = False
         # Dispatcher state
         self._ui_queue: queue.Queue = queue.Queue()  # In-process queue: dispatcher thread -> main thread
         self._stop_event = threading.Event()
@@ -157,6 +160,7 @@ class TranscriptionPanel:
         self.tree.tag_configure("processing", foreground="#F39C12", background="#FFF8F0")
         self.tree.tag_configure("done", foreground="#18BC9C")
         self.tree.tag_configure("error", foreground="#E74C3C", background="#FFF5F5")
+        self.tree.tag_configure("claude_error", foreground="#E74C3C", background="#FFF5F5")
 
         # Scrollbar
         scrollbar = ttk.Scrollbar(frame, orient="vertical", command=self.tree.yview)
@@ -184,9 +188,11 @@ class TranscriptionPanel:
         self._update_empty_state()
 
     def _build_action_bar(self, frame: ttk.Frame) -> None:
-        """Build the action bar: output folder picker, transcribe button, progress bar."""
+        """Build the action bar: output folder picker, transcribe button, progress bar,
+        plus new Claude controls (row 1) and inline prompt editor (row 2)."""
         frame.columnconfigure(1, weight=1)  # entry_output_dir expands
 
+        # --- Row 0 (existing): output folder + transcribe + progress ---
         # Column 0: Output label
         lbl_output = ttk.Label(frame, text=_("ui.action.output_label"), font=("", 9))
         lbl_output.grid(row=0, column=0, sticky="w", padx=(0, 8))
@@ -228,6 +234,93 @@ class TranscriptionPanel:
         self.lbl_progress_count = ttk.Label(frame, text="", font=("", 9), foreground="#95A5A6")
         self.lbl_progress_count.grid(row=0, column=5)
 
+        # --- Row 1 (NEW): context + Claude controls ---
+        context_row = ttk.Frame(frame)
+        context_row.grid(row=1, column=0, columnspan=6, sticky="ew", pady=(8, 0))
+        context_row.columnconfigure(3, weight=1)  # entry_context expands
+
+        # Col 0: Context label
+        ttk.Label(context_row, text=_("ui.action.context_label"), font=("", 9)).grid(row=0, column=0, padx=(0, 4))
+
+        # Col 1: Profile dropdown
+        self._combo_profile = ttk.Combobox(context_row, width=20, state="readonly")
+        self._combo_profile.grid(row=0, column=1, padx=(0, 4))
+        self._combo_profile.bind("<<ComboboxSelected>>", self._on_profile_selected)
+        self._refresh_profile_combo()
+
+        # Col 2: Profile manage button "..."
+        self._btn_manage_profile = ttk.Button(
+            context_row, text="...", width=3,
+            bootstyle="secondary",  # type: ignore[call-arg]
+            command=self._on_manage_profile,
+        )
+        self._btn_manage_profile.grid(row=0, column=2, padx=(0, 8))
+
+        # Col 3: Context text entry (expands)
+        self._context_var = tk.StringVar(value="")
+        self._entry_context = ttk.Entry(context_row, textvariable=self._context_var)
+        self._entry_context.grid(row=0, column=3, sticky="ew", padx=(0, 8))
+
+        # Col 4: "Přepsat + Upravit" button
+        self._btn_transcribe_edit = ttk.Button(
+            context_row, text=_("ui.action.transcribe_edit"),
+            bootstyle="success",  # type: ignore[call-arg]
+            width=18, command=self._on_transcribe_edit_click,
+        )
+        self._btn_transcribe_edit.grid(row=0, column=4, padx=(0, 4))
+
+        # Col 5: "Upravit" standalone button
+        self._btn_edit_only = ttk.Button(
+            context_row, text=_("ui.action.edit_only"),
+            bootstyle="secondary",  # type: ignore[call-arg]
+            width=8, command=self._on_edit_only_click,
+            state="disabled",
+        )
+        self._btn_edit_only.grid(row=0, column=5)
+
+        # Prompt toggle link (between row 1 and row 2)
+        self._btn_toggle_prompt = ttk.Button(
+            frame, text=_("ui.action.toggle_prompt_show"),
+            bootstyle="link",  # type: ignore[call-arg]
+            command=self._toggle_prompt_editor,
+        )
+        self._btn_toggle_prompt.grid(row=2, column=0, columnspan=6, sticky="w", pady=(4, 0))
+
+        # --- Row 3 (NEW): inline prompt editor (collapsed by default) ---
+        self._prompt_frame = ttk.Frame(frame)
+        # NOT gridded initially — hidden by default
+
+        self._prompt_frame.columnconfigure(1, weight=1)
+        ttk.Label(self._prompt_frame, text=_("ui.action.prompt_label"), font=("", 9)).grid(
+            row=0, column=0, sticky="nw", padx=(0, 4),
+        )
+
+        self._txt_prompt = ScrolledText(self._prompt_frame, height=6)
+        self._txt_prompt.grid(row=0, column=1, sticky="ew")
+        # Load default prompt
+        self._load_prompt_text()
+
+        self._btn_reset_prompt = ttk.Button(
+            self._prompt_frame, text=_("ui.action.reset_prompt"),
+            bootstyle="secondary",  # type: ignore[call-arg]
+            command=self._reset_prompt,
+        )
+        self._btn_reset_prompt.grid(row=0, column=2, padx=(4, 0), sticky="n")
+
+        self._lbl_cost_estimate = ttk.Label(
+            self._prompt_frame, text="", font=("", 9), foreground="#95A5A6",
+        )
+        self._lbl_cost_estimate.grid(row=1, column=1, sticky="w", pady=(4, 0))
+
+        self._prompt_visible = False
+
+        # Bind prompt text change to cost estimate update (debounced)
+        self._cost_update_after_id: str | None = None
+        self._txt_prompt.text.bind("<KeyRelease>", self._on_prompt_text_changed)
+
+        # Initial button state
+        self._update_claude_button_states()
+
     def _build_log_panel(self, frame: ttk.Frame) -> None:
         """Build the read-only log panel with monospace font and color tags."""
         log_font = ("Consolas", 9) if sys.platform == "win32" else ("Menlo", 9)
@@ -246,6 +339,9 @@ class TranscriptionPanel:
         self.log.text.tag_configure("progress", foreground="#95A5A6")
         self.log.text.tag_configure("done", foreground="#18BC9C")
         self.log.text.tag_configure("error", foreground="#E74C3C")
+        self.log.text.tag_configure("claude", foreground="#2C3E50")
+        self.log.text.tag_configure("claude_done", foreground="#18BC9C")
+        self.log.text.tag_configure("cost", foreground="#95A5A6")
 
     # ------------------------------------------------------------------
     # Public API (called by Plan 03 dispatcher)
@@ -369,6 +465,317 @@ class TranscriptionPanel:
         """Return current output directory. Empty string means 'same as source file'."""
         return self._output_dir.get()
 
+    def reload_strings(self) -> None:
+        """Reload all translatable strings in response to a language switch."""
+        # Toolbar buttons
+        self.btn_add_files.configure(text=_("ui.toolbar.add_files"))
+        self.btn_add_folder.configure(text=_("ui.toolbar.add_folder"))
+        self.btn_remove.configure(text=_("ui.toolbar.remove_selected"))
+        # Queue headings
+        self.tree.heading("filename", text=_("ui.queue.col_file"))
+        self.tree.heading("filesize", text=_("ui.queue.col_size"))
+        self.tree.heading("duration", text=_("ui.queue.col_duration"))
+        self.tree.heading("status", text=_("ui.queue.col_status"))
+        # Action bar
+        if not self._running:
+            self.btn_transcribe.configure(text=_("ui.action.transcribe"))
+        # New buttons
+        self._btn_transcribe_edit.configure(text=_("ui.action.transcribe_edit"))
+        self._btn_edit_only.configure(text=_("ui.action.edit_only"))
+        # Prompt toggle
+        if self._prompt_visible:
+            self._btn_toggle_prompt.configure(text=_("ui.action.toggle_prompt_hide"))
+        else:
+            self._btn_toggle_prompt.configure(text=_("ui.action.toggle_prompt_show"))
+        # Empty label
+        self._empty_label.configure(text=f"{_('ui.empty.heading')}\n{_('ui.empty.body')}")
+        # Reload default prompt if not customized
+        self._load_prompt_text()
+
+    # ------------------------------------------------------------------
+    # Claude UI helpers
+    # ------------------------------------------------------------------
+
+    def _update_claude_button_states(self) -> None:
+        """Enable/disable Claude buttons based on API key, queue state, and running status."""
+        from src.whisperai.utils.settings import get_api_key
+        has_key = get_api_key() is not None
+        has_files = bool(self.tree.get_children())
+        has_done = any(
+            "done" in self.tree.item(iid, "tags")
+            for iid in self.tree.get_children()
+        )
+
+        if self._running:
+            self._btn_transcribe_edit.configure(state="disabled")
+            self._btn_edit_only.configure(state="disabled")
+            return
+
+        # "Přepsat + Upravit" — needs key and files
+        if has_key and has_files:
+            self._btn_transcribe_edit.configure(state="normal")
+        else:
+            self._btn_transcribe_edit.configure(state="disabled")
+            if not has_key and has_files:
+                ToolTip(self._btn_transcribe_edit, text=_("ui.action.no_key_tooltip"))
+
+        # "Upravit" — needs at least one done row
+        if has_done:
+            self._btn_edit_only.configure(state="normal")
+        else:
+            self._btn_edit_only.configure(state="disabled")
+
+    def _refresh_profile_combo(self) -> None:
+        """Reload the profile dropdown from settings."""
+        no_profile = _("ui.action.no_profile") if "_" in dir(__builtins__) else "No profile"
+        try:
+            no_profile = _("ui.action.no_profile")
+        except Exception:
+            no_profile = "No profile"
+
+        profiles: dict = {}
+        if self._settings is not None:
+            profiles = self._settings.get("context_profiles") or {}
+
+        values = [no_profile] + sorted(profiles.keys())
+        self._combo_profile.configure(values=values)
+
+        active = ""
+        if self._settings is not None:
+            active = self._settings.get("active_profile") or ""
+
+        if active and active in profiles:
+            self._combo_profile.set(active)
+        else:
+            self._combo_profile.current(0)
+
+    def _on_profile_selected(self, event: tk.Event) -> None:
+        """Load profile text into the context entry when a profile is selected."""
+        selected = self._combo_profile.get()
+        try:
+            no_profile = _("ui.action.no_profile")
+        except Exception:
+            no_profile = "No profile"
+
+        if selected == no_profile:
+            self._context_var.set("")
+        else:
+            if self._settings is not None:
+                profiles = self._settings.get("context_profiles") or {}
+                text = profiles.get(selected, "")
+                self._context_var.set(text)
+                self._settings.set("active_profile", selected)
+
+    def _on_manage_profile(self) -> None:
+        """Show profile management menu (New / Rename / Delete)."""
+        menu = tk.Menu(self.root, tearoff=False)
+        menu.add_command(
+            label=_("ui.action.new_profile"),
+            command=self._profile_new,
+        )
+        menu.add_command(
+            label=_("ui.action.rename_profile"),
+            command=self._profile_rename,
+        )
+        menu.add_command(
+            label=_("ui.action.delete_profile"),
+            command=self._profile_delete,
+        )
+        try:
+            x = self._btn_manage_profile.winfo_rootx()
+            y = self._btn_manage_profile.winfo_rooty() + self._btn_manage_profile.winfo_height()
+            menu.tk_popup(x, y)
+        finally:
+            menu.grab_release()
+
+    def _profile_new(self) -> None:
+        """Create a new context profile from the current context text."""
+        name = simpledialog.askstring(
+            _("ui.action.new_profile"),
+            _("ui.action.new_profile"),
+            parent=self.root,
+        )
+        if not name or not name.strip():
+            return
+        name = name.strip()
+        if self._settings is not None:
+            profiles = dict(self._settings.get("context_profiles") or {})
+            profiles[name] = self._context_var.get()
+            self._settings.set("context_profiles", profiles)
+            self._settings.set("active_profile", name)
+            self._settings.save()
+        self._refresh_profile_combo()
+        self._combo_profile.set(name)
+
+    def _profile_rename(self) -> None:
+        """Rename the currently selected profile."""
+        current = self._combo_profile.get()
+        try:
+            no_profile = _("ui.action.no_profile")
+        except Exception:
+            no_profile = "No profile"
+        if current == no_profile or not current:
+            return
+        new_name = simpledialog.askstring(
+            _("ui.action.rename_profile"),
+            _("ui.action.rename_profile"),
+            initialvalue=current,
+            parent=self.root,
+        )
+        if not new_name or not new_name.strip():
+            return
+        new_name = new_name.strip()
+        if self._settings is not None:
+            profiles = dict(self._settings.get("context_profiles") or {})
+            text = profiles.pop(current, "")
+            profiles[new_name] = text
+            self._settings.set("context_profiles", profiles)
+            self._settings.set("active_profile", new_name)
+            self._settings.save()
+        self._refresh_profile_combo()
+        self._combo_profile.set(new_name)
+
+    def _profile_delete(self) -> None:
+        """Delete the currently selected profile after confirmation."""
+        current = self._combo_profile.get()
+        try:
+            no_profile = _("ui.action.no_profile")
+        except Exception:
+            no_profile = "No profile"
+        if current == no_profile or not current:
+            return
+        confirm = messagebox.askyesno(
+            _("ui.action.delete_profile"),
+            _("ui.action.delete_profile_confirm").format(name=current),
+            parent=self.root,
+        )
+        if not confirm:
+            return
+        if self._settings is not None:
+            profiles = dict(self._settings.get("context_profiles") or {})
+            profiles.pop(current, None)
+            self._settings.set("context_profiles", profiles)
+            self._settings.set("active_profile", "")
+            self._settings.save()
+        self._refresh_profile_combo()
+
+    def _toggle_prompt_editor(self) -> None:
+        """Toggle visibility of the inline prompt editor."""
+        self._prompt_visible = not self._prompt_visible
+        if self._prompt_visible:
+            self._prompt_frame.grid(row=3, column=0, columnspan=6, sticky="ew", pady=(4, 0))
+            self._btn_toggle_prompt.configure(text=_("ui.action.toggle_prompt_hide"))
+            self._update_cost_estimate()
+        else:
+            self._prompt_frame.grid_forget()
+            self._btn_toggle_prompt.configure(text=_("ui.action.toggle_prompt_show"))
+
+    def _load_prompt_text(self) -> None:
+        """Load prompt text from settings, or fall back to the bundled default."""
+        prompt_text = ""
+        if self._settings is not None:
+            prompt_text = self._settings.get("claude_prompt") or ""
+
+        if not prompt_text:
+            try:
+                from src.whisperai.utils.settings import get_default_prompt
+                from src.whisperai.utils.i18n import get_current_language
+                prompt_text = get_default_prompt(get_current_language())
+            except Exception:
+                prompt_text = ""
+
+        if hasattr(self, "_txt_prompt"):
+            self._txt_prompt.text.configure(state="normal")
+            self._txt_prompt.text.delete("1.0", tk.END)
+            self._txt_prompt.text.insert("1.0", prompt_text)
+
+    def _reset_prompt(self) -> None:
+        """Reset the prompt to the bundled default."""
+        if self._settings is not None:
+            self._settings.set("claude_prompt", "")
+        self._load_prompt_text()
+
+    def _on_prompt_text_changed(self, event: tk.Event) -> None:
+        """Debounce cost estimate update on prompt text change."""
+        if self._cost_update_after_id is not None:
+            self.root.after_cancel(self._cost_update_after_id)
+        self._cost_update_after_id = self.root.after(500, self._update_cost_estimate)
+
+    def _update_cost_estimate(self) -> None:
+        """Update the cost estimate label based on current prompt + context length."""
+        if not hasattr(self, "_lbl_cost_estimate"):
+            return
+        try:
+            from src.whisperai.core.claude_cleaner import estimate_cost_pre_send
+            prompt_text = self._txt_prompt.text.get("1.0", tk.END)
+            context_text = self._context_var.get()
+            # Estimate ~500 chars for a typical short audio transcript chunk
+            sample_transcript_chars = 500
+            char_count = len(prompt_text) + len(context_text) + sample_transcript_chars
+            model = "claude-haiku-4-5"
+            if self._settings is not None:
+                model = self._settings.get("claude_model") or model
+            cost = estimate_cost_pre_send(char_count, model)
+            self._lbl_cost_estimate.configure(
+                text=_("ui.action.cost_estimate").format(estimate=f"{cost:.4f}"),
+            )
+        except Exception:
+            pass
+
+    # ------------------------------------------------------------------
+    # VAD spinner
+    # ------------------------------------------------------------------
+
+    def _start_vad_spinner(self, iid: str) -> None:
+        """Start animated dots in the status column during VAD preprocessing."""
+        dots = ["\u00b7", "\u00b7\u00b7", "\u00b7\u00b7\u00b7"]
+        self._vad_spinner_state: dict = {"index": 0, "running": True, "iid": iid}
+
+        def tick() -> None:
+            if not self._vad_spinner_state["running"]:
+                return
+            d = dots[self._vad_spinner_state["index"] % 3]
+            self._vad_spinner_state["index"] += 1
+            try:
+                current_values = list(self.tree.item(iid, "values"))
+                current_values[3] = f"{_('ui.status.processing')} {d}"
+                self.tree.item(iid, values=current_values, tags=("processing",))
+            except Exception:
+                return
+            self.root.after(400, tick)
+
+        tick()
+
+    def _stop_vad_spinner(self) -> None:
+        """Stop the VAD spinner."""
+        if hasattr(self, "_vad_spinner_state"):
+            self._vad_spinner_state["running"] = False
+
+    # ------------------------------------------------------------------
+    # File collision handling
+    # ------------------------------------------------------------------
+
+    def _resolve_output_path(self, source_path: Path, suffix: str, output_dir: str) -> Path:
+        """Return a non-colliding output path for the given source file and suffix.
+
+        If the target already exists, adds incrementing counter: _prepis_2.txt, etc.
+        Logs a collision notice when fallback naming is used.
+        """
+        base_dir = Path(output_dir) if output_dir else source_path.parent
+        out_path = base_dir / (source_path.stem + suffix + ".txt")
+        if out_path.exists():
+            counter = 2
+            while True:
+                out_path = base_dir / (source_path.stem + f"{suffix}_{counter}.txt")
+                if not out_path.exists():
+                    break
+                counter += 1
+            self.append_log(
+                _("log.saved_collision").format(filename=out_path.name),
+                "info",
+            )
+        return out_path
+
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
@@ -386,6 +793,7 @@ class TranscriptionPanel:
             self.btn_transcribe.configure(state="normal")
         else:
             self.btn_transcribe.configure(state="disabled")
+        self._update_claude_button_states()
 
     def _start_duration_probe(self, iid: str, file_path: Path) -> None:
         """Launch a background thread to probe the file duration via ffprobe."""
@@ -490,7 +898,7 @@ class TranscriptionPanel:
             self._output_dir.set(folder)
 
     def _on_transcribe_click(self) -> None:
-        """Handle transcribe / stop button click."""
+        """Handle transcribe / stop button click (transcription only, no Claude)."""
         if self._running:
             # Stop requested (D-12)
             self._stop_event.set()
@@ -501,6 +909,7 @@ class TranscriptionPanel:
         if not waiting:
             return
 
+        self._claude_cleanup_mode = False
         self._running = True
         self._stop_event.clear()
         self._batch_files = waiting
@@ -516,6 +925,152 @@ class TranscriptionPanel:
         # Launch dispatcher in background thread
         thread = threading.Thread(target=self._run_dispatch, daemon=True)
         thread.start()
+
+    def _on_transcribe_edit_click(self) -> None:
+        """Handle 'Přepsat + Upravit' button — transcription + Claude cleanup pipeline."""
+        if self._running:
+            return
+
+        waiting = self.get_waiting_files()
+        if not waiting:
+            return
+
+        self._claude_cleanup_mode = True
+        self._running = True
+        self._stop_event.clear()
+        self._batch_files = waiting
+        self._batch_done_count = 0
+        self._batch_total = len(waiting)
+        self.set_transcribing(True)
+        self._update_claude_button_states()
+        self.update_overall_progress(0, self._batch_total)
+        self.append_log(_("log.batch_start").format(count=self._batch_total), "info")
+
+        # Persist current prompt text to settings before starting
+        if self._settings is not None and hasattr(self, "_txt_prompt"):
+            prompt_text = self._txt_prompt.text.get("1.0", tk.END).strip()
+            self._settings.set("claude_prompt", prompt_text)
+
+        # Start queue polling
+        self._start_queue_poll()
+
+        # Launch dispatcher in background thread
+        thread = threading.Thread(target=self._run_dispatch, daemon=True)
+        thread.start()
+
+    def _on_edit_only_click(self) -> None:
+        """Handle standalone 'Upravit' — Claude cleanup on all completed files."""
+        done_iids = [
+            iid for iid in self.tree.get_children()
+            if "done" in self.tree.item(iid, "tags")
+        ]
+        if not done_iids:
+            return
+
+        # Persist current prompt text to settings
+        if self._settings is not None and hasattr(self, "_txt_prompt"):
+            prompt_text = self._txt_prompt.text.get("1.0", tk.END).strip()
+            self._settings.set("claude_prompt", prompt_text)
+
+        for iid in done_iids:
+            filepath = self._row_data[iid]["full_path"]
+            text = self._row_data[iid].get("result_text", "")
+            thread = threading.Thread(
+                target=self._run_claude_cleanup,
+                args=(iid, text, filepath),
+                daemon=True,
+            )
+            thread.start()
+
+    def _run_claude_cleanup(self, iid: str, text: str, filepath: str) -> None:
+        """Run Claude cleanup for one file. Called from a background thread.
+
+        Saves _upraveno.txt with summary + cleaned transcript + diff.
+        Always assumes _prepis.txt was already saved before this point (CLAUDE-04).
+        """
+        from src.whisperai.utils.settings import get_api_key, get_default_prompt
+        from src.whisperai.utils.i18n import get_current_language
+        from src.whisperai.core.claude_cleaner import (
+            clean_transcript,
+            calculate_actual_cost,
+            generate_diff,
+        )
+
+        api_key = get_api_key()
+        if api_key is None:
+            self.append_log(_("log.claude_no_key"), "error")
+            return
+
+        model = "claude-haiku-4-5"
+        if self._settings is not None:
+            model = self._settings.get("claude_model") or model
+
+        # Get prompt: from prompt editor if visible, else from settings, else default
+        prompt = ""
+        if self._prompt_visible and hasattr(self, "_txt_prompt"):
+            # Read from the text widget in a thread-safe way
+            prompt = self._txt_prompt.text.get("1.0", tk.END).strip()
+        if not prompt and self._settings is not None:
+            prompt = self._settings.get("claude_prompt") or ""
+        if not prompt:
+            try:
+                prompt = get_default_prompt(get_current_language())
+            except Exception:
+                prompt = ""
+
+        context_text = self._context_var.get()
+
+        try:
+            result = clean_transcript(
+                text=text,
+                system_prompt=prompt,
+                context_text=context_text,
+                model=model,
+                api_key=api_key,
+                progress_queue=self._ui_queue,
+                task_id=iid,
+                timeout=300.0,
+            )
+        except Exception as exc:
+            reason = str(exc)
+            self._ui_queue.put({
+                "type": "claude_error",
+                "iid": iid,
+                "reason": reason,
+            })
+            return
+
+        # Save _upraveno.txt with output format (D-07)
+        output_dir = self._output_dir.get()
+        source_path = Path(filepath)
+        out_path = self._resolve_output_path(source_path, "_upraveno", output_dir)
+
+        cleaned_text = result["result"]
+        diff = generate_diff(text, cleaned_text)
+
+        file_content = cleaned_text
+        if diff.strip():
+            file_content += "\n\n---\n\n## Comparison with Original\n\n" + diff
+
+        try:
+            out_path.write_text(file_content, encoding="utf-8")
+        except Exception as exc:
+            self._ui_queue.put({
+                "type": "claude_error",
+                "iid": iid,
+                "reason": f"Write failed: {exc}",
+            })
+            return
+
+        # Calculate cost and report
+        cost = calculate_actual_cost(result["input_tokens"], result["output_tokens"], model)
+        total_tokens = result["input_tokens"] + result["output_tokens"]
+        self._ui_queue.put({
+            "type": "claude_done",
+            "iid": iid,
+            "tokens": total_tokens,
+            "cost": cost,
+        })
 
     def _run_dispatch(self) -> None:
         """Background thread: dispatches files to ProcessPoolExecutor workers."""
@@ -605,25 +1160,17 @@ class TranscriptionPanel:
             drain_thread.join(timeout=5)
             self._ui_queue.put({"type": "batch_complete"})
 
-    def _process_future_result(self, future: concurrent.futures.Future, iid: str, filepath: str) -> None:
+    def _process_future_result(
+        self, future: concurrent.futures.Future, iid: str, filepath: str
+    ) -> None:
         """Process the result of a completed transcription future. Called from _run_dispatch thread."""
         try:
             result = future.result()
 
-            # Determine output path (D-08, D-09)
+            # Determine output path using collision-safe helper (D-08, D-09)
             output_dir = self._output_dir.get()
             source_path = Path(filepath)
-            base_dir = Path(output_dir) if output_dir else source_path.parent
-            out_path = base_dir / (source_path.stem + "_prepis.txt")
-
-            # Avoid overwriting existing files — add counter suffix
-            if out_path.exists():
-                counter = 2
-                while True:
-                    out_path = base_dir / (source_path.stem + f"_prepis_{counter}.txt")
-                    if not out_path.exists():
-                        break
-                    counter += 1
+            out_path = self._resolve_output_path(source_path, "_prepis", output_dir)
 
             # Save transcript (D-09: auto-save, UTF-8 encoding)
             out_path.write_text(result["text"], encoding="utf-8")
@@ -635,6 +1182,15 @@ class TranscriptionPanel:
                 "output_path": str(out_path),
                 "text": result["text"],
             })
+
+            # Pipeline mode: trigger Claude cleanup after each transcription (D-05)
+            if self._claude_cleanup_mode and not self._stop_event.is_set():
+                thread = threading.Thread(
+                    target=self._run_claude_cleanup,
+                    args=(iid, result["text"], filepath),
+                    daemon=True,
+                )
+                thread.start()
 
         except Exception as exc:
             error_str = str(exc)
@@ -684,9 +1240,13 @@ class TranscriptionPanel:
         msg_type = msg["type"]
 
         if msg_type == "vad_analyzing":
+            iid = msg.get("task_id")
+            if iid:
+                self._start_vad_spinner(iid)
             self.append_log(_("log.vad_analyzing"), "info")
 
         elif msg_type == "vad_done":
+            self._stop_vad_spinner()
             stats = msg["vad_stats"]
             self.append_log(
                 _("log.vad_result").format(
@@ -732,6 +1292,8 @@ class TranscriptionPanel:
                 ),
                 "done",
             )
+            # Update Claude button states (Upravit may become enabled)
+            self._update_claude_button_states()
 
         elif msg_type == "file_error":
             iid = msg["iid"]
@@ -750,9 +1312,40 @@ class TranscriptionPanel:
             for iid, _path in msg["files"]:
                 self.update_row_status(iid, _("ui.status.waiting"), "waiting")
 
+        elif msg_type == "claude_processing":
+            self.append_log(_("log.claude_processing"), "claude")
+
+        elif msg_type == "claude_chunk":
+            self.append_log(
+                _("log.claude_chunk").format(n=msg["n"], total=msg["total"]),
+                "claude",
+            )
+
+        elif msg_type == "claude_slow":
+            self.append_log(
+                _("log.claude_slow").format(elapsed=msg["elapsed"]),
+                "claude",
+            )
+
+        elif msg_type == "claude_done":
+            self.append_log(
+                _("log.claude_done").format(tokens=msg["tokens"], cost=f"{msg['cost']:.4f}"),
+                "claude_done",
+            )
+
+        elif msg_type == "claude_error":
+            iid = msg["iid"]
+            self.update_row_status(iid, _("ui.status.claude_error"), "claude_error")
+            self.append_log(
+                _("log.claude_error").format(reason=msg["reason"]),
+                "error",
+            )
+
         elif msg_type == "batch_complete":
             self._running = False
+            self._claude_cleanup_mode = False
             self.set_transcribing(False)
+            self._update_claude_button_states()
             if self._stop_event.is_set():
                 remaining = self._batch_total - self._batch_done_count
                 self.append_log(
@@ -802,7 +1395,7 @@ class TranscriptionPanel:
         if col == "#1":
             # Filename column: show full path
             self._tooltip.text = self._row_data[iid]["full_path"]
-        elif col == "#4" and "error" in tags:
+        elif col == "#4" and ("error" in tags or "claude_error" in tags):
             # Status column for error rows: show error detail
             error_msg = self._row_data[iid]["error_msg"]
             self._tooltip.text = error_msg if error_msg else ""
