@@ -44,7 +44,12 @@ Plans:
   4. Transcription completes and saves `_prepis.txt` to the output location; output file contains correct Czech text
   5. When transcription fails (bad audio, out of memory), a clear error message appears in the log — app does not crash
   6. App detects and uses CUDA (Windows) or MPS (Mac) GPU when available, and falls back to CPU with a log message confirming which device is active
-**Plans**: TBD
+**Plans:** 4 plans
+Plans:
+- [ ] 02-01-PLAN.md — Core backend: GPU detection, VAD preprocessing, Whisper transcriber worker
+- [ ] 02-02-PLAN.md — TranscriptionPanel UI: Treeview, toolbar, action bar, log panel, i18n strings
+- [ ] 02-03-PLAN.md — Integration: dispatcher thread, queue drain, progress/error handling, file output
+- [ ] 02-04-PLAN.md — Human verification: end-to-end transcription flow
 **UI hint**: yes
 
 ### Phase 3: Claude Cleanup + Settings
@@ -76,11 +81,11 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 1/1 | Complete   | 2026-03-28 |
-| 2. Core Transcription | 0/TBD | Not started | - |
+| 2. Core Transcription | 0/4 | In progress | - |
 | 3. Claude Cleanup + Settings | 0/TBD | Not started | - |
 | 4. Packaging | 0/TBD | Not started | - |
