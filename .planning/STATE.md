@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 02-02-PLAN.md
-last_updated: "2026-03-28T11:41:43.885Z"
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-03-28T11:47:19.517Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 ## Current Position
 
 Phase: 02 (core-transcription) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 
 ## Performance Metrics
 
@@ -50,6 +50,7 @@ Plan: 3 of 4
 | Phase 01-foundation P01 | 112 | 3 tasks | 15 files |
 | Phase 02 P01 | 5 | 2 tasks | 5 files |
 | Phase 02-core-transcription P02 | 194 | 2 tasks | 6 files |
+| Phase 02-core-transcription P03 | 2 | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,8 @@ Recent decisions affecting current work:
 - [Phase 02]: tqdm injection pattern for Whisper progress — no official callback API in whisper.transcribe()
 - [Phase 02-core-transcription]: TranscriptionPanel is pure UI with no transcription logic — Plan 03 wires backend dispatch
 - [Phase 02-core-transcription]: ffprobe duration probing runs in background thread with root.after for thread-safe UI update
+- [Phase 02-core-transcription]: set_transcribing() no longer manages _running state — dispatcher owns _running to avoid double-setting conflicts
+- [Phase 02-core-transcription]: Two-queue pattern: multiprocessing.Queue for worker->drain thread, queue.Queue for drain->main thread — required because multiprocessing.Queue cannot be polled by root.after
 
 ### Pending Todos
 
@@ -85,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T11:41:43.881Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-03-28T11:47:19.512Z
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None

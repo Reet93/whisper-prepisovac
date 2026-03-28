@@ -20,10 +20,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **TRANS-01**: User can transcribe audio using Whisper medium model with Czech language
 - [x] **TRANS-02**: App auto-detects GPU (CUDA on Windows, MPS on Mac) with CPU fallback
-- [ ] **TRANS-03**: User sees detailed real-time log during transcription (file name, progress, device used)
+- [x] **TRANS-03**: User sees detailed real-time log during transcription (file name, progress, device used)
 - [x] **TRANS-04**: User can configure number of parallel file processing workers (1-N)
 - [x] **TRANS-05**: App preprocesses audio with VAD to prevent Whisper hallucinations on silence
-- [ ] **TRANS-06**: App shows clear error messages when transcription fails (bad audio, out of memory, etc.)
+- [x] **TRANS-06**: App shows clear error messages when transcription fails (bad audio, out of memory, etc.)
 
 ### Claude API Cleanup
 
@@ -109,10 +109,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FILE-06 | Phase 2 | Complete |
 | TRANS-01 | Phase 2 | Complete |
 | TRANS-02 | Phase 2 | Complete |
-| TRANS-03 | Phase 2 | Pending |
+| TRANS-03 | Phase 2 | Complete |
 | TRANS-04 | Phase 2 | Complete |
 | TRANS-05 | Phase 2 | Complete |
-| TRANS-06 | Phase 2 | Pending |
+| TRANS-06 | Phase 2 | Complete |
 | CLAUDE-01 | Phase 3 | Pending |
 | CLAUDE-02 | Phase 3 | Pending |
 | CLAUDE-03 | Phase 3 | Pending |
