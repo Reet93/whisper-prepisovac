@@ -42,6 +42,10 @@ def transcribe_file(
     import numpy as np
 
     # Step 1: VAD preprocessing — strip silence (D-19)
+    _progress_queue.put({
+        "type": "vad_analyzing",
+        "task_id": task_id,
+    })
     speech_tensor, vad_stats = preprocess_audio(audio_path)
     _progress_queue.put({
         "type": "vad_done",
@@ -77,14 +81,20 @@ def transcribe_file(
         # Collect segments and report progress
         text_parts = []
         total_duration = vad_stats["speech_duration_s"]
+        last_reported_pct = -1
         for segment in segments:
             text_parts.append(segment.text)
-            _progress_queue.put({
-                "type": "progress",
-                "task_id": task_id,
-                "n": int(segment.end),
-                "total": int(total_duration),
-            })
+            # Report progress every ~5% to avoid flooding the UI queue
+            pct = int(segment.end / max(total_duration, 1) * 100)
+            if pct >= last_reported_pct + 5:
+                last_reported_pct = pct
+                _progress_queue.put({
+                    "type": "progress",
+                    "task_id": task_id,
+                    "n": int(segment.end),
+                    "total": int(total_duration),
+                    "pct": min(pct, 100),
+                })
 
         return {"text": " ".join(text_parts).strip(), "vad_stats": vad_stats}
 

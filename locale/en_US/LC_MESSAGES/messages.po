@@ -48,19 +48,19 @@ msgid "ui.status.waiting"
 msgstr "waiting"
 
 msgid "ui.status.processing"
-msgstr "processing\u2026"
+msgstr "processing…"
 
 msgid "ui.status.done"
 msgstr "done"
 
 msgid "ui.status.error"
-msgstr "\u26a0 error"
+msgstr "⚠ error"
 
 msgid "ui.action.output_label"
 msgstr "Output folder:"
 
 msgid "ui.action.browse"
-msgstr "\u2026"
+msgstr "…"
 
 msgid "ui.action.transcribe"
 msgstr "Transcribe"
@@ -72,7 +72,7 @@ msgid "ui.action.progress_count"
 msgstr "{done} / {total} files"
 
 msgid "ui.menu.save_as"
-msgstr "Save as\u2026"
+msgstr "Save as…"
 
 msgid "ui.empty.heading"
 msgstr "No files"
@@ -81,7 +81,7 @@ msgid "ui.empty.body"
 msgstr "Add audio files using the buttons above."
 
 msgid "log.device_cuda"
-msgstr "Device: CUDA \u2013 {name}"
+msgstr "Device: CUDA – {name}"
 
 msgid "log.device_mps"
 msgstr "Device: Apple MPS (Apple Silicon)"
@@ -93,31 +93,34 @@ msgid "log.file_added"
 msgstr "File added: {filename}"
 
 msgid "log.batch_start"
-msgstr "Starting transcription of {count} files\u2026"
+msgstr "Starting transcription of {count} files…"
 
 msgid "log.file_processing"
 msgstr "Processing: {filename}"
 
+msgid "log.vad_analyzing"
+msgstr "Analyzing audio – detecting speech…"
+
 msgid "log.vad_result"
-msgstr "VAD: {segments} speech segments found ({speech_s}s speech from {total_s}s)"
+msgstr "Found {segments} speech segments ({speech_s}s speech from {total_s}s total)"
 
 msgid "log.whisper_progress"
-msgstr "\u2192 {n}/{total} segments"
+msgstr "Transcribing… {pct}% ({n}s / {total}s)"
 
 msgid "log.file_done"
-msgstr "Done: {filename} \u2192 {output_path}"
+msgstr "Done: {filename} → {output_path}"
 
 msgid "log.batch_done"
 msgstr "Transcription complete. {count} files done."
 
 msgid "log.stop_requested"
-msgstr "Stopping after current file finishes\u2026"
+msgstr "Stopping after current file finishes…"
 
 msgid "log.batch_stopped"
 msgstr "Transcription stopped. {done} done, {remaining} waiting."
 
 msgid "log.error"
-msgstr "Error: {filename} \u2014 {error}"
+msgstr "Error: {filename} — {error}"
 
 msgid "err.unsupported_format"
 msgstr "Unsupported format. Convert the file to .mp3 or .wav."

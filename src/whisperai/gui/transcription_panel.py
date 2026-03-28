@@ -320,11 +320,8 @@ class TranscriptionPanel:
             self._row_data[iid]["error_msg"] = detail
 
     def update_row_progress(self, iid: str, n: int, total: int) -> None:
-        """Update status cell to show 'zpracovava se... N/T' for the active row."""
-        base_status = _("ui.status.processing")
-        # Strip trailing ellipsis from the translated string if present
-        base = base_status.rstrip("\u2026").rstrip(".")
-        progress_text = f"{base}\u2026 {n}/{total}"
+        """Update status cell to show percentage progress for the active row."""
+        progress_text = f"{n}%" if total == 100 else f"{n}/{total}"
         current_values = list(self.tree.item(iid, "values"))
         current_values[3] = progress_text
         self.tree.item(iid, values=current_values, tags=("processing",))
@@ -401,28 +398,29 @@ class TranscriptionPanel:
         """Probe file duration using ffprobe; update tree cell on completion."""
         duration_str = "\u2013"  # en-dash fallback
         try:
+            # Try bundled ffprobe first, then system PATH
             ffprobe_name = "ffprobe.exe" if sys.platform == "win32" else "ffprobe"
             ffprobe_path = get_resource_path(f"bin/{ffprobe_name}")
+            cmd = str(ffprobe_path) if ffprobe_path.exists() else "ffprobe"
 
-            if ffprobe_path.exists():
-                result = subprocess.run(
-                    [
-                        str(ffprobe_path),
-                        "-v", "quiet",
-                        "-print_format", "json",
-                        "-show_format",
-                        str(file_path),
-                    ],
-                    capture_output=True,
-                    text=True,
-                    timeout=10,
-                )
-                if result.returncode == 0:
-                    data = json.loads(result.stdout)
-                    duration_secs = float(data.get("format", {}).get("duration", 0))
-                    minutes = int(duration_secs // 60)
-                    seconds = int(duration_secs % 60)
-                    duration_str = f"{minutes:02d}:{seconds:02d}"
+            result = subprocess.run(
+                [
+                    cmd,
+                    "-v", "quiet",
+                    "-print_format", "json",
+                    "-show_format",
+                    str(file_path),
+                ],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            if result.returncode == 0:
+                data = json.loads(result.stdout)
+                duration_secs = float(data.get("format", {}).get("duration", 0))
+                minutes = int(duration_secs // 60)
+                seconds = int(duration_secs % 60)
+                duration_str = f"{minutes:02d}:{seconds:02d}"
         except Exception:
             pass  # Silently fall back to en-dash
 
@@ -604,10 +602,17 @@ class TranscriptionPanel:
             # Determine output path (D-08, D-09)
             output_dir = self._output_dir.get()
             source_path = Path(filepath)
-            if output_dir:
-                out_path = Path(output_dir) / (source_path.stem + "_prepis.txt")
-            else:
-                out_path = source_path.parent / (source_path.stem + "_prepis.txt")
+            base_dir = Path(output_dir) if output_dir else source_path.parent
+            out_path = base_dir / (source_path.stem + "_prepis.txt")
+
+            # Avoid overwriting existing files — add counter suffix
+            if out_path.exists():
+                counter = 2
+                while True:
+                    out_path = base_dir / (source_path.stem + f"_prepis_{counter}.txt")
+                    if not out_path.exists():
+                        break
+                    counter += 1
 
             # Save transcript (D-09: auto-save, UTF-8 encoding)
             out_path.write_text(result["text"], encoding="utf-8")
@@ -667,7 +672,10 @@ class TranscriptionPanel:
         """Process a message from the dispatcher thread. Always called in the main thread."""
         msg_type = msg["type"]
 
-        if msg_type == "vad_done":
+        if msg_type == "vad_analyzing":
+            self.append_log(_("log.vad_analyzing"), "info")
+
+        elif msg_type == "vad_done":
             stats = msg["vad_stats"]
             self.append_log(
                 _("log.vad_result").format(
@@ -681,9 +689,10 @@ class TranscriptionPanel:
         elif msg_type == "progress":
             iid = msg["task_id"]
             n, total = msg["n"], msg["total"]
-            self.update_row_progress(iid, n, total)
+            pct = msg.get("pct", int(n / max(total, 1) * 100))
+            self.update_row_progress(iid, pct, 100)
             self.append_log(
-                _("log.whisper_progress").format(n=n, total=total),
+                _("log.whisper_progress").format(pct=pct, n=n, total=total),
                 "progress",
             )
 

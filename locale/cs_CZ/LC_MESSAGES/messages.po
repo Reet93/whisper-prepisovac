@@ -48,19 +48,19 @@ msgid "ui.status.waiting"
 msgstr "čeká"
 
 msgid "ui.status.processing"
-msgstr "zpracovává se\u2026"
+msgstr "zpracovává se…"
 
 msgid "ui.status.done"
 msgstr "hotovo"
 
 msgid "ui.status.error"
-msgstr "\u26a0 chyba"
+msgstr "⚠ chyba"
 
 msgid "ui.action.output_label"
 msgstr "Výstupní složka:"
 
 msgid "ui.action.browse"
-msgstr "\u2026"
+msgstr "…"
 
 msgid "ui.action.transcribe"
 msgstr "Přepsat"
@@ -72,7 +72,7 @@ msgid "ui.action.progress_count"
 msgstr "{done} / {total} souborů"
 
 msgid "ui.menu.save_as"
-msgstr "Uložit jako\u2026"
+msgstr "Uložit jako…"
 
 msgid "ui.empty.heading"
 msgstr "Žádné soubory"
@@ -81,7 +81,7 @@ msgid "ui.empty.body"
 msgstr "Přidejte zvukové soubory tlačítkem výše."
 
 msgid "log.device_cuda"
-msgstr "Zařízení: CUDA \u2013 {name}"
+msgstr "Zařízení: CUDA – {name}"
 
 msgid "log.device_mps"
 msgstr "Zařízení: Apple MPS (Apple Silicon)"
@@ -93,31 +93,34 @@ msgid "log.file_added"
 msgstr "Přidán soubor: {filename}"
 
 msgid "log.batch_start"
-msgstr "Zahajuji přepis {count} souborů\u2026"
+msgstr "Zahajuji přepis {count} souborů…"
 
 msgid "log.file_processing"
 msgstr "Zpracovávám: {filename}"
 
+msgid "log.vad_analyzing"
+msgstr "Analyzuji zvuk – hledám řeč…"
+
 msgid "log.vad_result"
-msgstr "VAD: {segments} řečových segmentů nalezeno ({speech_s}s řeči z {total_s}s)"
+msgstr "Nalezeno {segments} řečových segmentů ({speech_s}s řeči z {total_s}s celkem)"
 
 msgid "log.whisper_progress"
-msgstr "\u2192 {n}/{total} segmentů"
+msgstr "Přepisuji… {pct}% ({n}s / {total}s)"
 
 msgid "log.file_done"
-msgstr "Hotovo: {filename} \u2192 {output_path}"
+msgstr "Hotovo: {filename} → {output_path}"
 
 msgid "log.batch_done"
 msgstr "Přepis dokončen. {count} souborů hotovo."
 
 msgid "log.stop_requested"
-msgstr "Zastavuji po dokončení aktuálního souboru\u2026"
+msgstr "Zastavuji po dokončení aktuálního souboru…"
 
 msgid "log.batch_stopped"
 msgstr "Přepis zastaven. {done} hotovo, {remaining} čeká."
 
 msgid "log.error"
-msgstr "Chyba: {filename} \u2014 {error}"
+msgstr "Chyba: {filename} — {error}"
 
 msgid "err.unsupported_format"
 msgstr "Nepodporovaný formát. Převeďte soubor na .mp3 nebo .wav."
