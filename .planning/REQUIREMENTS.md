@@ -9,12 +9,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### File Management
 
-- [ ] **FILE-01**: User can add individual audio files via file picker (.mp3, .wav, .m4a, .ogg)
-- [ ] **FILE-02**: User can add all audio files from a folder via folder picker
-- [ ] **FILE-03**: User can see list of loaded files with status (čeká / zpracovává / hotovo)
-- [ ] **FILE-04**: User can remove files from the queue before processing
-- [ ] **FILE-05**: User can save single output via "Save as" dialog
-- [ ] **FILE-06**: User can select output folder for batch auto-save (_prepis.txt / _upraveno.txt naming)
+- [x] **FILE-01**: User can add individual audio files via file picker (.mp3, .wav, .m4a, .ogg)
+- [x] **FILE-02**: User can add all audio files from a folder via folder picker
+- [x] **FILE-03**: User can see list of loaded files with status (čeká / zpracovává / hotovo)
+- [x] **FILE-04**: User can remove files from the queue before processing
+- [x] **FILE-05**: User can save single output via "Save as" dialog
+- [x] **FILE-06**: User can select output folder for batch auto-save (_prepis.txt / _upraveno.txt naming)
 
 ### Transcription
 
@@ -101,12 +101,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-01 | Phase 1 | Complete |
 | UI-02 | Phase 1 | Complete |
 | UI-03 | Phase 1 | Complete |
-| FILE-01 | Phase 2 | Pending |
-| FILE-02 | Phase 2 | Pending |
-| FILE-03 | Phase 2 | Pending |
-| FILE-04 | Phase 2 | Pending |
-| FILE-05 | Phase 2 | Pending |
-| FILE-06 | Phase 2 | Pending |
+| FILE-01 | Phase 2 | Complete |
+| FILE-02 | Phase 2 | Complete |
+| FILE-03 | Phase 2 | Complete |
+| FILE-04 | Phase 2 | Complete |
+| FILE-05 | Phase 2 | Complete |
+| FILE-06 | Phase 2 | Complete |
 | TRANS-01 | Phase 2 | Complete |
 | TRANS-02 | Phase 2 | Complete |
 | TRANS-03 | Phase 2 | Pending |
