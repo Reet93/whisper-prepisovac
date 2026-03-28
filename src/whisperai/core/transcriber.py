@@ -1,7 +1,4 @@
 """Whisper transcription worker — runs in ProcessPoolExecutor subprocess."""
-import sys
-import whisper
-import torch
 from pathlib import Path
 
 from src.whisperai.core.vad import preprocess_audio
@@ -11,12 +8,15 @@ _progress_queue = None  # Module-level; set once per worker by _worker_init
 
 
 def _worker_init(model_path: str, device: str, progress_queue) -> None:
-    """ProcessPoolExecutor initializer. Loads Whisper model once per worker process."""
+    """ProcessPoolExecutor initializer. Loads faster-whisper model once per worker process."""
     global _model, _progress_queue
+    from faster_whisper import WhisperModel
     _progress_queue = progress_queue
-    _model = whisper.load_model(
+    compute_type = "float16" if device == "cuda" else "int8"
+    _model = WhisperModel(
         "medium",
         device=device,
+        compute_type=compute_type,
         download_root=model_path,
     )
 
@@ -52,14 +52,14 @@ def transcribe_file(
     if vad_stats["segment_count"] == 0:
         return {"text": "", "vad_stats": vad_stats}
 
-    # Step 2: Write speech-only audio to temp WAV for Whisper
+    # Step 2: Write speech-only audio to temp WAV for faster-whisper
     temp_wav = None
     try:
         temp_wav = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
         temp_wav_path = temp_wav.name
         temp_wav.close()
 
-        # Write 16-bit PCM WAV using stdlib wave (no torchaudio dependency)
+        # Write 16-bit PCM WAV using stdlib wave
         pcm_data = (speech_tensor.numpy() * 32767).astype(np.int16)
         with wave.open(temp_wav_path, "wb") as wf:
             wf.setnchannels(1)
@@ -67,38 +67,26 @@ def transcribe_file(
             wf.setframerate(16000)
             wf.writeframes(pcm_data.tobytes())
 
-        # Step 3: Inject progress hook into whisper.transcribe's tqdm
-        import tqdm as tqdm_module
+        # Step 3: Run faster-whisper transcription (Czech, medium model)
+        segments, info = _model.transcribe(
+            temp_wav_path,
+            language="cs",
+            vad_filter=False,  # We already did VAD
+        )
 
-        class _ProgressTqdm(tqdm_module.tqdm):
-            def update(self, n=1):
-                super().update(n)
-                _progress_queue.put({
-                    "type": "progress",
-                    "task_id": task_id,
-                    "n": self.n,
-                    "total": self.total,
-                })
+        # Collect segments and report progress
+        text_parts = []
+        total_duration = vad_stats["speech_duration_s"]
+        for segment in segments:
+            text_parts.append(segment.text)
+            _progress_queue.put({
+                "type": "progress",
+                "task_id": task_id,
+                "n": int(segment.end),
+                "total": int(total_duration),
+            })
 
-        whisper_transcribe_mod = sys.modules.get("whisper.transcribe")
-        original_tqdm = None
-        if whisper_transcribe_mod and hasattr(whisper_transcribe_mod, "tqdm"):
-            original_tqdm = whisper_transcribe_mod.tqdm.tqdm
-            whisper_transcribe_mod.tqdm.tqdm = _ProgressTqdm
-
-        # Step 4: Run Whisper transcription (TRANS-01: Czech, medium model)
-        try:
-            result = _model.transcribe(
-                temp_wav_path,
-                language="cs",
-                verbose=False,
-            )
-        finally:
-            # Restore original tqdm to avoid side effects across calls
-            if whisper_transcribe_mod and original_tqdm is not None:
-                whisper_transcribe_mod.tqdm.tqdm = original_tqdm
-
-        return {"text": result["text"], "vad_stats": vad_stats}
+        return {"text": " ".join(text_parts).strip(), "vad_stats": vad_stats}
 
     finally:
         # Cleanup temp file
