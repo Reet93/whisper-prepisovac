@@ -63,7 +63,12 @@ Plans:
   4. User can skip API key setup and use "Přepsat" without Claude features working — no crash, no blocking dialog
   5. User can view and update or remove the API key from the settings panel
   6. Settings panel persists output folder, language choice, and parallel worker count between sessions
-**Plans**: TBD
+**Plans:** 4 plans
+Plans:
+- [ ] 03-01-PLAN.md — Settings infrastructure, Claude cleaner backend, i18n strings
+- [ ] 03-02-PLAN.md — Settings dialog UI, API key banner, gear button, live language reload
+- [ ] 03-03-PLAN.md — TranscriptionPanel extensions: Claude controls, context profiles, prompt editor, pipeline dispatch
+- [ ] 03-04-PLAN.md — Human verification: end-to-end Phase 3 flow
 **UI hint**: yes
 
 ### Phase 4: Packaging
@@ -87,5 +92,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 1/1 | Complete   | 2026-03-28 |
 | 2. Core Transcription | 3/4 | In Progress|  |
-| 3. Claude Cleanup + Settings | 0/TBD | Not started | - |
+| 3. Claude Cleanup + Settings | 0/4 | Not started | - |
 | 4. Packaging | 0/TBD | Not started | - |
