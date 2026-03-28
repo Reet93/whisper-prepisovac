@@ -22,3 +22,114 @@ msgstr "Welcome. Transcription features will be added in later phases."
 
 msgid "ui.language_changed_notice"
 msgstr "Language changed. Restart the app to apply changes."
+
+msgid "ui.toolbar.add_files"
+msgstr "Add files"
+
+msgid "ui.toolbar.add_folder"
+msgstr "Add folder"
+
+msgid "ui.toolbar.remove_selected"
+msgstr "Remove selected"
+
+msgid "ui.queue.col_file"
+msgstr "File"
+
+msgid "ui.queue.col_size"
+msgstr "Size"
+
+msgid "ui.queue.col_duration"
+msgstr "Duration"
+
+msgid "ui.queue.col_status"
+msgstr "Status"
+
+msgid "ui.status.waiting"
+msgstr "waiting"
+
+msgid "ui.status.processing"
+msgstr "processing\u2026"
+
+msgid "ui.status.done"
+msgstr "done"
+
+msgid "ui.status.error"
+msgstr "\u26a0 error"
+
+msgid "ui.action.output_label"
+msgstr "Output folder:"
+
+msgid "ui.action.browse"
+msgstr "\u2026"
+
+msgid "ui.action.transcribe"
+msgstr "Transcribe"
+
+msgid "ui.action.stop"
+msgstr "Stop"
+
+msgid "ui.action.progress_count"
+msgstr "{done} / {total} files"
+
+msgid "ui.menu.save_as"
+msgstr "Save as\u2026"
+
+msgid "ui.empty.heading"
+msgstr "No files"
+
+msgid "ui.empty.body"
+msgstr "Add audio files using the buttons above."
+
+msgid "log.device_cuda"
+msgstr "Device: CUDA \u2013 {name}"
+
+msgid "log.device_mps"
+msgstr "Device: Apple MPS (Apple Silicon)"
+
+msgid "log.device_cpu"
+msgstr "No GPU available, using CPU"
+
+msgid "log.file_added"
+msgstr "File added: {filename}"
+
+msgid "log.batch_start"
+msgstr "Starting transcription of {count} files\u2026"
+
+msgid "log.file_processing"
+msgstr "Processing: {filename}"
+
+msgid "log.vad_result"
+msgstr "VAD: {segments} speech segments found ({speech_s}s speech from {total_s}s)"
+
+msgid "log.whisper_progress"
+msgstr "\u2192 {n}/{total} segments"
+
+msgid "log.file_done"
+msgstr "Done: {filename} \u2192 {output_path}"
+
+msgid "log.batch_done"
+msgstr "Transcription complete. {count} files done."
+
+msgid "log.stop_requested"
+msgstr "Stopping after current file finishes\u2026"
+
+msgid "log.batch_stopped"
+msgstr "Transcription stopped. {done} done, {remaining} waiting."
+
+msgid "log.error"
+msgstr "Error: {filename} \u2014 {error}"
+
+msgid "err.unsupported_format"
+msgstr "Unsupported format. Convert the file to .mp3 or .wav."
+
+msgid "err.out_of_memory"
+msgstr "GPU out of memory. Try closing other applications or use CPU."
+
+msgid "err.file_not_found"
+msgstr "File not found. Was it moved or deleted?"
+
+msgid "err.ffprobe_failed"
+msgstr "Cannot read file duration. The file may be corrupted."
+
+msgid "err.generic"
+msgstr "Transcription error. See the log below for details."

@@ -3,6 +3,8 @@ from tkinter import messagebox
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import LEFT, RIGHT
 
+from src.whisperai.gui.transcription_panel import TranscriptionPanel
+
 
 class MainWindow:
     """Main application window with header/content/footer layout."""
@@ -36,15 +38,12 @@ class MainWindow:
         )
         app_title_label.pack(side=LEFT)
 
-        # --- Content (placeholder for Phase 1) ---
+        # --- Content ---
         content_frame = ttk.Frame(main_frame)
         content_frame.grid(row=1, column=0, sticky="nsew")
+        self.content_frame = content_frame
 
-        placeholder = ttk.Label(
-            content_frame,
-            text=_("ui.placeholder"),
-        )
-        placeholder.pack(expand=True)
+        self.transcription_panel = TranscriptionPanel(content_frame, root)
 
         # --- Footer ---
         footer_frame = ttk.Frame(main_frame)

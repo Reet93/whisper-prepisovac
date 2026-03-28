@@ -22,3 +22,114 @@ msgstr "Vítejte. Funkce přepisu budou přidány v dalších fázích."
 
 msgid "ui.language_changed_notice"
 msgstr "Jazyk byl změněn. Restartujte aplikaci pro použití změn."
+
+msgid "ui.toolbar.add_files"
+msgstr "Přidat soubory"
+
+msgid "ui.toolbar.add_folder"
+msgstr "Přidat složku"
+
+msgid "ui.toolbar.remove_selected"
+msgstr "Odebrat vybrané"
+
+msgid "ui.queue.col_file"
+msgstr "Soubor"
+
+msgid "ui.queue.col_size"
+msgstr "Velikost"
+
+msgid "ui.queue.col_duration"
+msgstr "Délka"
+
+msgid "ui.queue.col_status"
+msgstr "Stav"
+
+msgid "ui.status.waiting"
+msgstr "čeká"
+
+msgid "ui.status.processing"
+msgstr "zpracovává se\u2026"
+
+msgid "ui.status.done"
+msgstr "hotovo"
+
+msgid "ui.status.error"
+msgstr "\u26a0 chyba"
+
+msgid "ui.action.output_label"
+msgstr "Výstupní složka:"
+
+msgid "ui.action.browse"
+msgstr "\u2026"
+
+msgid "ui.action.transcribe"
+msgstr "Přepsat"
+
+msgid "ui.action.stop"
+msgstr "Zastavit"
+
+msgid "ui.action.progress_count"
+msgstr "{done} / {total} souborů"
+
+msgid "ui.menu.save_as"
+msgstr "Uložit jako\u2026"
+
+msgid "ui.empty.heading"
+msgstr "Žádné soubory"
+
+msgid "ui.empty.body"
+msgstr "Přidejte zvukové soubory tlačítkem výše."
+
+msgid "log.device_cuda"
+msgstr "Zařízení: CUDA \u2013 {name}"
+
+msgid "log.device_mps"
+msgstr "Zařízení: Apple MPS (Apple Silicon)"
+
+msgid "log.device_cpu"
+msgstr "GPU nedostupné, používám CPU"
+
+msgid "log.file_added"
+msgstr "Přidán soubor: {filename}"
+
+msgid "log.batch_start"
+msgstr "Zahajuji přepis {count} souborů\u2026"
+
+msgid "log.file_processing"
+msgstr "Zpracovávám: {filename}"
+
+msgid "log.vad_result"
+msgstr "VAD: {segments} řečových segmentů nalezeno ({speech_s}s řeči z {total_s}s)"
+
+msgid "log.whisper_progress"
+msgstr "\u2192 {n}/{total} segmentů"
+
+msgid "log.file_done"
+msgstr "Hotovo: {filename} \u2192 {output_path}"
+
+msgid "log.batch_done"
+msgstr "Přepis dokončen. {count} souborů hotovo."
+
+msgid "log.stop_requested"
+msgstr "Zastavuji po dokončení aktuálního souboru\u2026"
+
+msgid "log.batch_stopped"
+msgstr "Přepis zastaven. {done} hotovo, {remaining} čeká."
+
+msgid "log.error"
+msgstr "Chyba: {filename} \u2014 {error}"
+
+msgid "err.unsupported_format"
+msgstr "Nepodporovaný formát. Převeďte soubor na .mp3 nebo .wav."
+
+msgid "err.out_of_memory"
+msgstr "Nedostatek paměti GPU. Zkuste zavřít ostatní aplikace nebo použijte CPU."
+
+msgid "err.file_not_found"
+msgstr "Soubor nebyl nalezen. Byl přesunut nebo smazán?"
+
+msgid "err.ffprobe_failed"
+msgstr "Nelze načíst délku souboru. Soubor může být poškozen."
+
+msgid "err.generic"
+msgstr "Chyba při přepisu. Podrobnosti v protokolu níže."
