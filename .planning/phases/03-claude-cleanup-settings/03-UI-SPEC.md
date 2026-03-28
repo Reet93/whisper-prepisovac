@@ -74,6 +74,8 @@ Inherited from Phase 1 UI-SPEC (approved). Phase 3 adds no new type roles.
 
 **Constraint:** No more than 2 font weights (normal + bold) in any single view. Phase 3 inherits this rule — do not introduce medium (500) or semibold (600).
 
+**DPI scaling note:** The 9pt/10pt/11pt scale has only 1pt increments between roles. At 150% or 200% Windows DPI scaling (common on 4K displays), point-size steps may collapse and become visually indistinguishable. To preserve role contrast under DPI scaling: (a) rely on weight contrast (normal vs bold) as the primary differentiator, not size alone; (b) verify the UI at 125%, 150%, and 200% DPI before release; (c) if size contrast is insufficient at a given DPI, widen the Label-to-Body gap to 2pt (Label 9pt → 8pt or Body 10pt → 11pt) as a targeted fix for that scale.
+
 ---
 
 ## Color
@@ -128,7 +130,14 @@ The gear icon (`⚙`) button is added to `header_frame` right-aligned. It sits o
 header_frame (ttk.Frame, row=0 in main_frame)
   ├── app_title_label  (LEFT)
   └── btn_settings     (RIGHT)  ← NEW: ttk.Button text="⚙", width=2, bootstyle="secondary"
+                                   ToolTip: Czech "Nastavení" / English "Settings"
 ```
+
+`btn_settings` must have a `ToolTip` attached:
+```python
+ToolTip(btn_settings, text=_("Nastavení"))
+```
+This covers the accessibility gap — the symbol-only button has no visible text label, so the tooltip is the only accessible label for screen readers and on hover.
 
 ### 2. API Key Banner
 
@@ -193,9 +202,9 @@ dialog (ttk.Toplevel)
         │     ├── tab_general   "Obecné"
         │     └── tab_claude    "Claude"
         └── btn_row_frame (ttk.Frame, sticky=ew)
-              ├── btn_reset     ttk.Button "Obnovit výchozí..."  bootstyle="secondary"  (LEFT)
-              ├── btn_cancel    ttk.Button "Zrušit"              bootstyle="secondary"  (RIGHT)
-              └── btn_save      ttk.Button "Uložit"              bootstyle="success"    (RIGHT, padx=8)
+              ├── btn_reset     ttk.Button "Obnovit výchozí..."   bootstyle="secondary"  (LEFT)
+              ├── btn_cancel    ttk.Button "Zahodit změny"        bootstyle="secondary"  (RIGHT)
+              └── btn_save      ttk.Button "Uložit nastavení"     bootstyle="success"    (RIGHT, padx=8)
 ```
 
 **Tab: Obecné (General)**
@@ -233,7 +242,7 @@ A child `ttk.Toplevel` with checkboxes for each resettable setting:
   [ ] Profily kontextu (smazat vše)
   API klíč — nelze obnovit (uložen v systémovém trezoru)
 
-  [Obnovit vybrané]  [Zrušit]
+  [Obnovit vybrané]  [Ponechat stávající]
 ```
 
 ---
@@ -248,8 +257,9 @@ All strings pass through `_()` i18n function. Czech is primary; English in paren
 |---------|-------|---------|-------|
 | Transcribe + Cleanup button | `Přepsat + Upravit` | `Transcribe + Edit` | `bootstyle="success"`; disabled when no API key (tooltip: see below) |
 | Standalone cleanup button | `Upravit` | `Edit` | `bootstyle="secondary"`; enabled only when ≥1 done row selected |
-| Settings save | `Uložit` | `Save` | `bootstyle="success"` |
-| Settings cancel | `Zrušit` | `Cancel` | `bootstyle="secondary"` |
+| Settings save | `Uložit nastavení` | `Save Settings` | `bootstyle="success"` — specific verb+noun, not generic "Save" |
+| Settings cancel | `Zahodit změny` | `Discard Changes` | `bootstyle="secondary"` — describes the consequence, not the generic action |
+| Reset sub-dialog dismiss | `Ponechat stávající` | `Keep Current` | Closes without resetting; specific about outcome |
 
 ### Blocked State Copy
 
@@ -320,7 +330,7 @@ The empty state label in the Treeview is unchanged from Phase 2.
 | Action | Trigger | Confirmation approach |
 |--------|---------|-----------------------|
 | Remove API key | "Odstranit API klíč" button in Claude settings tab | `messagebox.askyesno` — Czech: "Opravdu chcete odstranit API klíč? Tuto akci nelze vrátit." / English: "Remove API key? This cannot be undone." |
-| Reset to defaults | "Obnovit výchozí..." button in settings modal | Sub-dialog with per-setting checkboxes (see Layout Contract above) — no single confirm dialog; user controls which items reset |
+| Reset to defaults | "Obnovit výchozí..." button in settings modal | Sub-dialog with per-setting checkboxes (see Layout Contract above) — no single confirm dialog; user controls which items reset. Dismiss with "Ponechat stávající" / "Keep Current" |
 | Delete context profile | "Delete" in profile management menu | `messagebox.askyesno` — Czech: "Smazat profil '{name}'?" / English: "Delete profile '{name}'?" |
 
 ---
@@ -332,7 +342,7 @@ The empty state label in the Treeview is unchanged from Phase 2.
 - Opens on General tab always (D-16 from CONTEXT.md)
 - Escape key closes without saving
 - Save validates output folder existence before closing; if invalid, shows error label inline (no dialog)
-- API key field: masked with `*` by default; toggle button reveals plaintext. On "Uložit" with a new key value, fires a background validation call — shows "Ověřuji..." label, then "Klíč platný ✓" or error. Dialog does NOT close until validation resolves.
+- API key field: masked with `*` by default; toggle button reveals plaintext. On "Uložit nastavení" with a new key value, fires a background validation call — shows "Ověřuji..." label, then "Klíč platný ✓" or error. Dialog does NOT close until validation resolves.
 - `grab_set()` on the dialog — main window is non-interactive while settings is open
 
 ### Context Profiles Dropdown
@@ -382,7 +392,7 @@ New ttkbootstrap components introduced in Phase 3 (all from ttkbootstrap built-i
 
 | Component | Widget | Usage |
 |-----------|--------|-------|
-| Settings gear button | `ttk.Button` text="⚙" | Header, right-aligned |
+| Settings gear button | `ttk.Button` text="⚙" + `ToolTip` | Header, right-aligned; ToolTip provides "Nastavení"/"Settings" label |
 | API key banner | `ttk.Frame` + `ttk.Label` + 2× `ttk.Button` | Top of content_frame |
 | "Přepsat + Upravit" button | `ttk.Button` | Action bar row 1 |
 | "Upravit" button | `ttk.Button` | Action bar row 1 |
@@ -436,6 +446,7 @@ No third-party component registries. All UI components come from ttkbootstrap bu
 |----------|-------|--------|-----------|
 | Theme | `flatly` (inherited) | Phase 1 UI-SPEC (approved) | Continuity with established design system |
 | Gear icon | Unicode `⚙` (U+2699) as button text | UI researcher default | No icon library required; consistent with text-only approach in Phases 1-2 |
+| Gear button ToolTip | `ToolTip(btn_settings, text=_("Nastavení"))` | UI checker flag D2 | Symbol-only button requires accessible label; ToolTip is the standard ttkbootstrap mechanism |
 | "Přepsat + Upravit" placement | Action bar row 1, right of context entry | CONTEXT.md D-01, D-06 | Co-located with context and prompt controls; logically grouped |
 | "Upravit" standalone button | Action bar row 1, right of "Přepsat + Upravit" | CONTEXT.md D-01 | Separate from transcription-only path; proximity signals relationship |
 | API key banner | Non-blocking top-of-content bar | CONTEXT.md D-10 | Does not block workflow; dismissable; reappears on failed key |
@@ -451,3 +462,7 @@ No third-party component registries. All UI components come from ttkbootstrap bu
 | Reset to defaults | Checkbox sub-dialog, excludes API key | CONTEXT.md D-19 | Granular reset; API key handled only through Remove button |
 | Context profiles | Dropdown + "..." management menu | CONTEXT.md D-25, D-26 | Persistent named profiles without cluttering main view |
 | Inline prompt editor | Collapsed by default, toggled by link button | CONTEXT.md D-22 | Power user feature; hidden by default keeps main view clean |
+| Settings save label | "Uložit nastavení" / "Save Settings" | UI checker BLOCK D1 | Generic "Save"/"Uložit" on BLOCK list; specific verb+noun required |
+| Settings cancel label | "Zahodit změny" / "Discard Changes" | UI checker BLOCK D1 | Generic "Cancel"/"Zrušit" on BLOCK list; consequence-describing label required |
+| Reset sub-dialog dismiss label | "Ponechat stávající" / "Keep Current" | UI checker BLOCK D1 | Generic "Cancel"/"Zrušit" on BLOCK list; outcome-specific label required |
+| Typography DPI note | Rely on weight contrast; verify at 125/150/200% | UI checker FLAG D4 | 1pt increments can collapse at high DPI; weight contrast is robust at all scales |
