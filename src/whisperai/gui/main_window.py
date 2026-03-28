@@ -93,7 +93,9 @@ class MainWindow:
         self._update_banner()
 
         # TranscriptionPanel at row 1 (always present, expands)
-        self.transcription_panel = TranscriptionPanel(content_frame, root)
+        panel_frame = ttk.Frame(content_frame)
+        panel_frame.grid(row=1, column=0, sticky="nsew")
+        self.transcription_panel = TranscriptionPanel(panel_frame, root)
 
         # --- Footer ---
         footer_frame = ttk.Frame(main_frame)
@@ -162,7 +164,10 @@ class MainWindow:
     def _on_open_settings(self, tab: str = "general") -> None:
         """Open the settings modal dialog."""
         from src.whisperai.gui.settings_dialog import SettingsDialog
-        self._settings_dialog = SettingsDialog(self.root, self._settings)
+        self._settings_dialog = SettingsDialog(
+            self.root, self._settings,
+            on_language_changed=self._on_settings_language_changed,
+        )
         if tab == "claude":
             self._settings_dialog.open_on_claude_tab()
         # After dialog closes, refresh banner state

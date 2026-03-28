@@ -10,7 +10,7 @@ def main() -> None:
     set_language(lang)
 
     from src.whisperai.app import create_app
-    create_app(lang)
+    create_app()
 
 
 if __name__ == "__main__":

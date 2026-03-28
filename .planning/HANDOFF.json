@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-03-28T20:24:33.418Z",
+  "phase": "03",
+  "phase_name": "claude-cleanup-settings",
+  "phase_dir": ".planning/phases/03-claude-cleanup-settings",
+  "plan": 4,
+  "task": 1,
+  "total_tasks": 1,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": "03-01", "name": "Settings store + Claude backend", "status": "done", "commit": "9bb29c0"},
+    {"id": "03-02", "name": "Settings dialog + main window integration", "status": "done", "commit": "8031437"},
+    {"id": "03-03", "name": "Claude cleanup UI + pipeline", "status": "done", "commit": "f3a7671"}
+  ],
+  "remaining_tasks": [
+    {"id": "03-04", "name": "Human verification checkpoint", "status": "in_progress", "progress": "7 test groups presented, user tested 1-2, found 2 bugs, both fixed but uncommitted"}
+  ],
+  "blockers": [],
+  "human_actions_pending": [
+    {"action": "Re-run all 7 test groups after bug fixes", "context": "Banner and language reload fixes need re-verification", "blocking": true},
+    {"action": "Tests 3-7 not yet attempted", "context": "API key setup, Claude pipeline, standalone cleanup, error handling, prompt editor all untested", "blocking": true}
+  ],
+  "decisions": [
+    {"decision": "Wrapped TranscriptionPanel in its own frame to fix banner overlap", "rationale": "Panel was gridding at row=0 in content_frame, overwriting the banner widget", "phase": "03"},
+    {"decision": "Changed SettingsDialog to accept on_language_changed callback", "rationale": "Dialog was checking hasattr on ttk.Window (not MainWindow), so language callback never fired", "phase": "03"},
+    {"decision": "Removed lang parameter from create_app() call in main.py", "rationale": "app.py was refactored to read language from SettingsStore internally, but main.py still passed the arg", "phase": "03"}
+  ],
+  "uncommitted_files": [
+    "main.py",
+    "src/whisperai/gui/main_window.py",
+    "src/whisperai/gui/settings_dialog.py"
+  ],
+  "next_action": "Commit the 3 bug fixes (main.py, main_window.py, settings_dialog.py), then re-test all 7 test groups starting from Test 1 (banner visibility)",
+  "context_notes": "Phase 3 execution: Waves 1-2 complete (plans 03-01 through 03-03). Currently in Wave 3 (plan 03-04 human verification checkpoint). User found 2 bugs during testing: (1) API key banner not showing — TranscriptionPanel overwrote banner's grid row, (2) language switch not live-reloading — SettingsDialog callback targeted ttk.Window instead of MainWindow. Both fixed in working tree but not committed. Tests 3-7 still need to be run (API key, Claude pipeline, standalone cleanup, error handling, prompt editor). Also need to install platformdirs/keyring/anthropic in venv — done this session."
+}

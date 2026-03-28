@@ -30,9 +30,15 @@ from src.whisperai.core.device import detect_device
 class SettingsDialog:
     """Modal settings dialog with General and Claude tabs."""
 
-    def __init__(self, parent_root: ttk.Window, settings: SettingsStore) -> None:
+    def __init__(
+        self,
+        parent_root: ttk.Window,
+        settings: SettingsStore,
+        on_language_changed: callable = None,
+    ) -> None:
         self._settings = settings
         self._parent = parent_root
+        self._on_language_changed_cb = on_language_changed
 
         self.dialog = ttk.Toplevel(parent_root)
         self.dialog.title(_("settings.title"))
@@ -325,8 +331,8 @@ class SettingsDialog:
 
     def _trigger_lang_reload(self, lang: str) -> None:
         """Trigger live language reload in the main window."""
-        if hasattr(self._parent, "_on_settings_language_changed"):
-            self._parent._on_settings_language_changed(lang)
+        if self._on_language_changed_cb:
+            self._on_language_changed_cb(lang)
 
     def _on_remove_key(self) -> None:
         """Confirm and remove the stored API key."""
