@@ -28,18 +28,18 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Claude API Cleanup
 
 - [ ] **CLAUDE-01**: User can trigger "Přepsat + Upravit" for transcription + Claude API text cleanup
-- [ ] **CLAUDE-02**: Claude cleanup produces: grammar correction, paragraph structure, executive summary, and comparison with original
+- [x] **CLAUDE-02**: Claude cleanup produces: grammar correction, paragraph structure, executive summary, and comparison with original
 - [ ] **CLAUDE-03**: Output is 2 files: original transcript (_prepis.txt) + edited version with summary & diff (_upraveno.txt)
-- [ ] **CLAUDE-04**: Original transcript is always preserved and never deleted or overwritten
+- [x] **CLAUDE-04**: Original transcript is always preserved and never deleted or overwritten
 - [ ] **CLAUDE-05**: "Přepsat" button works independently — raw transcription without Claude API
 - [ ] **CLAUDE-06**: App works fully without Claude API key (transcription-only mode)
 
 ### API Key Management
 
 - [ ] **KEY-01**: App prompts for Anthropic API key on first use of Claude features
-- [ ] **KEY-02**: API key stored securely via Windows Credential Manager / macOS Keychain
+- [x] **KEY-02**: API key stored securely via Windows Credential Manager / macOS Keychain
 - [ ] **KEY-03**: User can skip API key setup and use transcription-only mode
-- [ ] **KEY-04**: When app is moved to new PC/user, prompts for fresh API key (no hardcoded keys)
+- [x] **KEY-04**: When app is moved to new PC/user, prompts for fresh API key (no hardcoded keys)
 - [ ] **KEY-05**: User can update or remove API key from settings
 
 ### User Interface
@@ -48,7 +48,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **UI-02**: i18n string dictionary used from first widget — all labels translatable
 - [x] **UI-03**: Modern-looking Tkinter GUI using ttkbootstrap theming
 - [ ] **UI-04**: Settings panel for API key, output folder, parallel workers, language, GPU preference
-- [ ] **UI-05**: Persistent settings between sessions (output folder, language, worker count)
+- [x] **UI-05**: Persistent settings between sessions (output folder, language, worker count)
 
 ### Packaging & Distribution
 
@@ -114,18 +114,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TRANS-05 | Phase 2 | Complete |
 | TRANS-06 | Phase 2 | Complete |
 | CLAUDE-01 | Phase 3 | Pending |
-| CLAUDE-02 | Phase 3 | Pending |
+| CLAUDE-02 | Phase 3 | Complete |
 | CLAUDE-03 | Phase 3 | Pending |
-| CLAUDE-04 | Phase 3 | Pending |
+| CLAUDE-04 | Phase 3 | Complete |
 | CLAUDE-05 | Phase 3 | Pending |
 | CLAUDE-06 | Phase 3 | Pending |
 | KEY-01 | Phase 3 | Pending |
-| KEY-02 | Phase 3 | Pending |
+| KEY-02 | Phase 3 | Complete |
 | KEY-03 | Phase 3 | Pending |
-| KEY-04 | Phase 3 | Pending |
+| KEY-04 | Phase 3 | Complete |
 | KEY-05 | Phase 3 | Pending |
 | UI-04 | Phase 3 | Pending |
-| UI-05 | Phase 3 | Pending |
+| UI-05 | Phase 3 | Complete |
 | PKG-01 | Phase 4 | Pending |
 | PKG-02 | Phase 4 | Pending |
 | PKG-03 | Phase 4 | Pending |
