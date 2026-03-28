@@ -98,13 +98,46 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (Populated by roadmapper) | | |
+| UI-01 | Phase 1 | Pending |
+| UI-02 | Phase 1 | Pending |
+| UI-03 | Phase 1 | Pending |
+| FILE-01 | Phase 2 | Pending |
+| FILE-02 | Phase 2 | Pending |
+| FILE-03 | Phase 2 | Pending |
+| FILE-04 | Phase 2 | Pending |
+| FILE-05 | Phase 2 | Pending |
+| FILE-06 | Phase 2 | Pending |
+| TRANS-01 | Phase 2 | Pending |
+| TRANS-02 | Phase 2 | Pending |
+| TRANS-03 | Phase 2 | Pending |
+| TRANS-04 | Phase 2 | Pending |
+| TRANS-05 | Phase 2 | Pending |
+| TRANS-06 | Phase 2 | Pending |
+| CLAUDE-01 | Phase 3 | Pending |
+| CLAUDE-02 | Phase 3 | Pending |
+| CLAUDE-03 | Phase 3 | Pending |
+| CLAUDE-04 | Phase 3 | Pending |
+| CLAUDE-05 | Phase 3 | Pending |
+| CLAUDE-06 | Phase 3 | Pending |
+| KEY-01 | Phase 3 | Pending |
+| KEY-02 | Phase 3 | Pending |
+| KEY-03 | Phase 3 | Pending |
+| KEY-04 | Phase 3 | Pending |
+| KEY-05 | Phase 3 | Pending |
+| UI-04 | Phase 3 | Pending |
+| UI-05 | Phase 3 | Pending |
+| PKG-01 | Phase 4 | Pending |
+| PKG-02 | Phase 4 | Pending |
+| PKG-03 | Phase 4 | Pending |
+| PKG-04 | Phase 4 | Pending |
+| PKG-05 | Phase 4 | Pending |
+| PKG-06 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 28 total
-- Mapped to phases: 0
-- Unmapped: 28 ⚠️
+- v1 requirements: 34 total (count corrected from initial 28 — all requirements enumerated)
+- Mapped to phases: 34
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-28*
-*Last updated: 2026-03-28 after initial definition*
+*Last updated: 2026-03-28 — traceability populated after roadmap creation*
