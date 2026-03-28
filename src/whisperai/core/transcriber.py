@@ -38,7 +38,8 @@ def transcribe_file(
         Exception with descriptive message on failure.
     """
     import tempfile
-    import torchaudio
+    import wave
+    import numpy as np
 
     # Step 1: VAD preprocessing — strip silence (D-19)
     speech_tensor, vad_stats = preprocess_audio(audio_path)
@@ -58,11 +59,13 @@ def transcribe_file(
         temp_wav_path = temp_wav.name
         temp_wav.close()
 
-        torchaudio.save(
-            temp_wav_path,
-            speech_tensor.unsqueeze(0),  # Add channel dimension
-            16000,
-        )
+        # Write 16-bit PCM WAV using stdlib wave (no torchaudio dependency)
+        pcm_data = (speech_tensor.numpy() * 32767).astype(np.int16)
+        with wave.open(temp_wav_path, "wb") as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(16000)
+            wf.writeframes(pcm_data.tobytes())
 
         # Step 3: Inject progress hook into whisper.transcribe's tqdm
         import tqdm as tqdm_module
