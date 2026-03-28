@@ -28,7 +28,9 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. All visible strings are loaded through the i18n `_()` function — no hardcoded UI text anywhere
   3. Switching language between Czech and English changes all labels without restart (or on restart — either is acceptable at this stage)
   4. `get_resource_path()` resolves bundled asset paths correctly in both dev and frozen context
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 01-01-PLAN.md — Project skeleton, i18n infrastructure, ttkbootstrap window with language switcher
 **UI hint**: yes
 
 ### Phase 2: Core Transcription
@@ -78,7 +80,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/1 | Planning complete | - |
 | 2. Core Transcription | 0/TBD | Not started | - |
 | 3. Claude Cleanup + Settings | 0/TBD | Not started | - |
 | 4. Packaging | 0/TBD | Not started | - |
