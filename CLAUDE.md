@@ -9,7 +9,7 @@ A cross-platform desktop application for transcribing audio recordings to text u
 
 ### Constraints
 
-- **Tech stack**: Python + Tkinter for GUI, openai-whisper for transcription, anthropic SDK for Claude API
+- **Tech stack**: Python + Tkinter for GUI, faster-whisper (CTranslate2) for transcription, anthropic SDK for Claude API
 - **Packaging**: PyInstaller portable folder — must run without Python installed
 - **Dependencies**: ffmpeg and Whisper model bundled, not downloaded at runtime
 - **Security**: API keys stored in OS-native secure storage, never in plaintext files
