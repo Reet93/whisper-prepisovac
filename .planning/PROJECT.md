@@ -12,7 +12,7 @@ Reliable, one-click transcription of long Czech audio recordings into clean, str
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Switchable UI language: Czech / English — Validated in Phase 01: Foundation
 
 ### Active
 
@@ -31,7 +31,7 @@ Reliable, one-click transcription of long Czech audio recordings into clean, str
 - [ ] "Vybrat výstupní složku" — batch save with auto-naming (_prepis.txt / _upraveno.txt)
 - [ ] API key management: prompt on first use, store via Credential Manager (Win) / Keychain (Mac)
 - [ ] Option to skip Claude API setup entirely — app works without it
-- [ ] Switchable UI language: Czech / English
+
 - [ ] PyInstaller portable folder packaging for Windows and macOS
 - [ ] Bundle ffmpeg and Whisper medium model with the app
 
@@ -66,13 +66,13 @@ Reliable, one-click transcription of long Czech audio recordings into clean, str
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Whisper medium model | Best Czech accuracy, bundle size not a concern | — Pending |
-| Tkinter for GUI | Simple, no extra dependencies, ships with Python | — Pending |
+| Tkinter for GUI | Simple, no extra dependencies, ships with Python | Implemented (Phase 01) |
 | 2-file output (original + edited) | User wants original preserved + edited with summary & comparison in one file | — Pending |
 | OS-native key storage | Credential Manager (Win) / Keychain (Mac) — secure, no plaintext | — Pending |
-| Switchable i18n (CZ/EN) | Small team now, wider audience later — both languages needed | — Pending |
+| Switchable i18n (CZ/EN) | Small team now, wider audience later — both languages needed | Implemented (Phase 01) |
 | Auto-detect GPU | CUDA/MPS when available, CPU fallback — best performance without config | — Pending |
 | Cross-platform from start | User needs both Win + Mac — build for both from the beginning | — Pending |
-| UI/UX design before coding | User requested design contract via /gsd:ui-phase before implementation | — Pending |
+| UI/UX design before coding | User requested design contract via /gsd:ui-phase before implementation | Implemented (Phase 01) |
 
 ## Evolution
 
@@ -92,4 +92,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-28 after initialization*
+*Last updated: 2026-03-28 after Phase 01 completion*
