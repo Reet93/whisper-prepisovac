@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 03-claude-cleanup-settings/03-02-PLAN.md
-last_updated: "2026-03-28T18:05:38.900Z"
+stopped_at: Completed 03-claude-cleanup-settings/03-03-PLAN.md
+last_updated: "2026-03-28T18:06:34.998Z"
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 ## Current Position
 
 Phase: 03 (claude-cleanup-settings) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Plan: 3 of 4
 | Phase 02 P04 | 10 | 0 tasks | 1 files |
 | Phase 03-claude-cleanup-settings P01 | 4 | 3 tasks | 9 files |
 | Phase 03-claude-cleanup-settings P02 | 25 | 2 tasks | 4 files |
+| Phase 03-claude-cleanup-settings P03 | 5 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,9 @@ Recent decisions affecting current work:
 - [Phase 03-claude-cleanup-settings]: Both cs and en prompt files are identical — split exists for D-24 language-aware prompt switching
 - [Phase 03-claude-cleanup-settings]: SettingsDialog validates API key in background thread; dialog stays open on failure, closes after 1s on success
 - [Phase 03-claude-cleanup-settings]: app.py create_app() reads language from SettingsStore instead of param — persisted language applied from first frame
+- [Phase 03-claude-cleanup-settings]: TranscriptionPanel accepts optional settings= parameter — backward-compatible with existing callers
+- [Phase 03-claude-cleanup-settings]: _resolve_output_path centralizes both _prepis.txt and _upraveno.txt collision handling
+- [Phase 03-claude-cleanup-settings]: get_current_language() added to i18n.py as Rule-2 deviation (missing critical function)
 
 ### Pending Todos
 
@@ -97,6 +101,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T18:05:38.895Z
-Stopped at: Completed 03-claude-cleanup-settings/03-02-PLAN.md
+Last session: 2026-03-28T18:06:34.993Z
+Stopped at: Completed 03-claude-cleanup-settings/03-03-PLAN.md
 Resume file: None
