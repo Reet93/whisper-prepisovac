@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+.vexp/
+venv/
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec.bak
+
+# Whisper models (downloaded on first launch, ~1.5 GB)
+models/
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# GSD planning and Claude session artifacts
+.planning/
+.claude/
+
+# Bundled ffmpeg binaries (downloaded separately for build)
+bin/
+
+# Temporary and log files
+*.log
+*.tmp
