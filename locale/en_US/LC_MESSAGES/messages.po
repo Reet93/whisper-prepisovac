@@ -334,3 +334,39 @@ msgstr "Claude AI text cleanup — experimental feature, coming soon"
 
 msgid "settings.claude_experimental"
 msgstr "⚠ Experimental feature — coming in a future release"
+
+msgid "download.title"
+msgstr "Download Whisper Model"
+
+msgid "download.body"
+msgstr "The Whisper model (medium, ~1.5 GB) is being downloaded.\nThis only happens once."
+
+msgid "download.progress"
+msgstr "Downloading..."
+
+msgid "download.size_hint"
+msgstr "Approx. size: 1.5 GB. Time: 2-15 min depending on connection speed."
+
+msgid "download.complete"
+msgstr "Model downloaded successfully."
+
+msgid "download.error_heading"
+msgstr "Download Failed"
+
+msgid "download.error_body"
+msgstr "Could not download the model. Check your internet connection and try again."
+
+msgid "download.retry"
+msgstr "Try Again"
+
+msgid "download.cancel"
+msgstr "Cancel Download"
+
+msgid "download.cancel_confirm"
+msgstr "Cancel download?"
+
+msgid "download.cancelled_warning"
+msgstr "The app cannot transcribe without the model. You can download it on next launch."
+
+msgid "download.start_button"
+msgstr "Download Model"

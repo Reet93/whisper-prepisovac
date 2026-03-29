@@ -334,3 +334,39 @@ msgstr "Čištění textu pomocí Claude AI — experimentální funkce, bude do
 
 msgid "settings.claude_experimental"
 msgstr "⚠ Experimentální funkce — bude dostupná v budoucí verzi"
+
+msgid "download.title"
+msgstr "Stazeni modelu Whisper"
+
+msgid "download.body"
+msgstr "Model Whisper (medium, ~1,5 GB) se stahuje.\nStahovani probehne pouze jednou."
+
+msgid "download.progress"
+msgstr "Stahovani..."
+
+msgid "download.size_hint"
+msgstr "Priblizna velikost: 1,5 GB. Cas: 2-15 minut dle rychlosti pripojeni."
+
+msgid "download.complete"
+msgstr "Model byl uspesne stazen."
+
+msgid "download.error_heading"
+msgstr "Stahovani selhalo"
+
+msgid "download.error_body"
+msgstr "Nepodarilo se stahnout model. Zkontrolujte pripojeni k internetu a zkuste to znovu."
+
+msgid "download.retry"
+msgstr "Zkusit znovu"
+
+msgid "download.cancel"
+msgstr "Zrusit stahovani"
+
+msgid "download.cancel_confirm"
+msgstr "Zrusit stahovani?"
+
+msgid "download.cancelled_warning"
+msgstr "Aplikace bez modelu nemuze prepisovat. Model lze stahnout pri pristim spusteni."
+
+msgid "download.start_button"
+msgstr "Stahnout model"
