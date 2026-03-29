@@ -109,7 +109,7 @@ All other UI surfaces are unchanged from Phases 1–3.
 | Download error heading | "Stahování selhalo" |
 | Download error body | "Nepodařilo se stáhnout model. Zkontrolujte připojení k internetu a zkuste to znovu." |
 | Download retry button | "Zkusit znovu" |
-| Download cancel button | "Zrušit" |
+| Download cancel button | "Zrušit stahování" |
 | Empty state — download cancelled | "Aplikace bez modelu nemůže přepisovat. Model lze stáhnout při příštím spuštění." |
 
 ### English (en) — secondary locale
@@ -125,14 +125,14 @@ All other UI surfaces are unchanged from Phases 1–3.
 | Download error heading | "Download Failed" |
 | Download error body | "Could not download the model. Check your internet connection and try again." |
 | Download retry button | "Try Again" |
-| Download cancel button | "Cancel" |
+| Download cancel button | "Cancel Download" |
 | Empty state — download cancelled | "The app cannot transcribe without the model. You can download it on next launch." |
 
 ### Destructive actions in Phase 4
 
 | Action | Confirmation Approach |
 |--------|----------------------|
-| Cancel active download | Inline confirmation label: "Zrušit stahování?" with confirm button (`bootstyle="danger"`) + cancel button (`bootstyle="secondary"`). No separate modal — dialog is already blocking. |
+| Cancel active download | Inline confirmation label: "Zrušit stahování?" with confirm button (`bootstyle="danger"`) + back button (`bootstyle="secondary"`). No separate modal — dialog is already blocking. |
 
 ---
 
@@ -158,15 +158,15 @@ New components introduced in Phase 4:
 │  Přibližná velikost: 1,5 GB. Čas: 2–15 min.      │
 │                                        [hint]     │
 │                                                   │
-│                      [Zrušit]                     │
+│                 [Zrušit stahování]                │
 └──────────────────────────────────────────────────┘
 ```
 
 **Progress bar:** `ttk.Progressbar(mode="indeterminate")` — starts automatically. Determinate mode deferred to post-v1 (RESEARCH.md open question 2).
 
-**Cancel flow:** On "Zrušit" click, stop download thread, show inline confirmation row with "Zrušit stahování?" label + confirm/back buttons. On confirm: close dialog, show empty state label in main window log. On back: resume progress display.
+**Cancel flow:** On "Zrušit stahování" click, stop download thread, show inline confirmation row with "Zrušit stahování?" label + confirm/back buttons. On confirm: close dialog, show empty state label in main window log. On back: resume progress display.
 
-**Error state:** Replace progress bar row with error heading (13px bold, `foreground="#E74C3C"`) + error body (9px regular) + "Zkusit znovu" button (`bootstyle="secondary"`) + "Zrušit" button (`bootstyle="danger"`).
+**Error state:** Replace progress bar row with error heading (13px bold, `foreground="#E74C3C"`) + error body (9px regular) + "Zkusit znovu" button (`bootstyle="secondary"`) + "Zrušit stahování" button (`bootstyle="danger"`).
 
 **Success state:** Replace progress bar with checkmark label "Model byl úspěšně stažen." (9px, `foreground` success color from flatly theme). Auto-close after 1500ms — consistent with SettingsDialog API key validation success pattern (Phase 3).
 
@@ -185,7 +185,7 @@ New components introduced in Phase 4:
 | State | Trigger | Visual |
 |-------|---------|--------|
 | Downloading (initial) | App launch, model absent | Indeterminate progress bar + "Stahování…" label |
-| Cancel confirmation | User clicks "Zrušit" | Progress pauses, inline "Zrušit stahování?" confirmation row replaces cancel button |
+| Cancel confirmation | User clicks "Zrušit stahování" | Progress pauses, inline "Zrušit stahování?" confirmation row replaces cancel button |
 | Error | Network failure / timeout | Progress bar hidden, error heading + body + retry/cancel buttons |
 | Success | Download completes | Progress bar hidden, success label shown, auto-close after 1500ms |
 | Cancelled | User confirms cancel | Dialog closes, main window opens with warning log line |
