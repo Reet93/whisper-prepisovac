@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 04-packaging 04-02-PLAN.md
-last_updated: "2026-03-29T17:17:42.301Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 04-packaging 04-03-PLAN.md
+last_updated: "2026-03-29T17:49:56.607Z"
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Project State
@@ -57,6 +57,7 @@ Plan: 3 of 3
 | Phase 03-claude-cleanup-settings P03 | 5 | 1 tasks | 2 files |
 | Phase 04-packaging P01 | 8 | 2 tasks | 5 files |
 | Phase 04-packaging P02 | 18 | 2 tasks | 7 files |
+| Phase 04-packaging P03 | 30 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,7 @@ Recent decisions affecting current work:
 - [Phase 04-packaging]: SettingsStore used in main.py for language — persisted language applied to download dialog strings
 - [Phase 04-packaging]: Temporary dl_root Window created for download dialog, destroyed before create_app() — avoids modifying create_app() internals
 - [Phase 04-packaging]: wait_window(dialog) blocks main thread until dialog closes — correct modal pattern for startup gating
+- [Phase 04-packaging]: TclError fix: reuse Tk root from download dialog in create_app() instead of creating a new root — destroying dl_root before create_app() killed the Tk interpreter
 
 ### Pending Todos
 
@@ -109,6 +111,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29T17:17:42.297Z
-Stopped at: Completed 04-packaging 04-02-PLAN.md
+Last session: 2026-03-29T17:49:56.602Z
+Stopped at: Completed 04-packaging 04-03-PLAN.md
 Resume file: None
