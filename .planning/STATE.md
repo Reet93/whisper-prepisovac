@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 3 complete, ready for Phase 4
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-29T16:10:59.133Z"
+status: Ready to execute
+stopped_at: Completed 04-packaging 04-01-PLAN.md
+last_updated: "2026-03-29T16:58:26.909Z"
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 12
+  completed_plans: 10
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 
 ## Current Position
 
-Phase: 04 (packaging) — READY TO PLAN
-Plan: 0 of TBD
+Phase: 04 (packaging) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Plan: 0 of TBD
 | Phase 03-claude-cleanup-settings P01 | 4 | 3 tasks | 9 files |
 | Phase 03-claude-cleanup-settings P02 | 25 | 2 tasks | 4 files |
 | Phase 03-claude-cleanup-settings P03 | 5 | 1 tasks | 2 files |
+| Phase 04-packaging P01 | 8 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,9 @@ Recent decisions affecting current work:
 - [Phase 03-claude-cleanup-settings]: TranscriptionPanel accepts optional settings= parameter — backward-compatible with existing callers
 - [Phase 03-claude-cleanup-settings]: _resolve_output_path centralizes both _prepis.txt and _upraveno.txt collision handling
 - [Phase 03-claude-cleanup-settings]: get_current_language() added to i18n.py as Rule-2 deviation (missing critical function)
+- [Phase 04-packaging]: get_model_path() uses platformdirs user_data_dir for frozen — sys._MEIPASS/_internal is read-only, cannot store downloaded model there
+- [Phase 04-packaging]: sys.setrecursionlimit(5000) placed before Analysis() in spec — torch module graph exceeds default 1000 limit
+- [Phase 04-packaging]: excludes=['whisper', 'openai.whisper'] in spec — openai-whisper is installed in venv but unused; excluding saves 100+ MB
 
 ### Pending Todos
 
@@ -101,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29T16:10:59.128Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-packaging/04-CONTEXT.md
+Last session: 2026-03-29T16:58:26.905Z
+Stopped at: Completed 04-packaging 04-01-PLAN.md
+Resume file: None
