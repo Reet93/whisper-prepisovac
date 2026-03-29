@@ -81,10 +81,10 @@ Plans:
   3. ffmpeg is found automatically by the app at startup — user does not need to install or configure it
   4. The Whisper medium model downloads on first launch with a progress dialog — no bundling required
   5. API key storage (keyring) works in the frozen/packaged app on Windows
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 Plans:
 - [x] 04-01-PLAN.md — Build infrastructure: model_path.py, PyInstaller spec, build script, ffmpeg PATH prepend
-- [ ] 04-02-PLAN.md — Model download dialog, i18n strings, main.py wiring, first build
+- [x] 04-02-PLAN.md — Model download dialog, i18n strings, main.py wiring, first build
 - [ ] 04-03-PLAN.md — Git publication (.gitignore, README, LICENSE), human verification of built app
 **UI hint**: yes
 
@@ -98,4 +98,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Foundation | 1/1 | Complete   | 2026-03-28 |
 | 2. Core Transcription | 3/4 | In Progress|  |
 | 3. Claude Cleanup + Settings | 3/4 | In Progress|  |
-| 4. Packaging | 1/3 | In Progress|  |
+| 4. Packaging | 2/3 | In Progress|  |

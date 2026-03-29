@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 04-packaging 04-01-PLAN.md
-last_updated: "2026-03-29T16:58:26.909Z"
+stopped_at: Completed 04-packaging 04-02-PLAN.md
+last_updated: "2026-03-29T17:17:42.301Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 ## Current Position
 
 Phase: 04 (packaging) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Plan: 2 of 3
 | Phase 03-claude-cleanup-settings P02 | 25 | 2 tasks | 4 files |
 | Phase 03-claude-cleanup-settings P03 | 5 | 1 tasks | 2 files |
 | Phase 04-packaging P01 | 8 | 2 tasks | 5 files |
+| Phase 04-packaging P02 | 18 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,9 @@ Recent decisions affecting current work:
 - [Phase 04-packaging]: get_model_path() uses platformdirs user_data_dir for frozen — sys._MEIPASS/_internal is read-only, cannot store downloaded model there
 - [Phase 04-packaging]: sys.setrecursionlimit(5000) placed before Analysis() in spec — torch module graph exceeds default 1000 limit
 - [Phase 04-packaging]: excludes=['whisper', 'openai.whisper'] in spec — openai-whisper is installed in venv but unused; excluding saves 100+ MB
+- [Phase 04-packaging]: SettingsStore used in main.py for language — persisted language applied to download dialog strings
+- [Phase 04-packaging]: Temporary dl_root Window created for download dialog, destroyed before create_app() — avoids modifying create_app() internals
+- [Phase 04-packaging]: wait_window(dialog) blocks main thread until dialog closes — correct modal pattern for startup gating
 
 ### Pending Todos
 
@@ -105,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29T16:58:26.905Z
-Stopped at: Completed 04-packaging 04-01-PLAN.md
+Last session: 2026-03-29T17:17:42.297Z
+Stopped at: Completed 04-packaging 04-02-PLAN.md
 Resume file: None

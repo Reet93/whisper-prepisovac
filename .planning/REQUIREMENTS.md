@@ -52,10 +52,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Packaging & Distribution
 
-- [ ] **PKG-01**: PyInstaller portable folder packaging for Windows (no Python required)
+- [x] **PKG-01**: PyInstaller portable folder packaging for Windows (no Python required)
 - [ ] **PKG-02**: PyInstaller portable folder packaging for macOS (no Python required)
 - [x] **PKG-03**: ffmpeg binary bundled with the app (not downloaded at runtime)
-- [ ] **PKG-04**: Whisper medium model bundled with the app (not downloaded at runtime)
+- [x] **PKG-04**: Whisper medium model bundled with the app (not downloaded at runtime)
 - [x] **PKG-05**: PyInstaller spec file with Whisper hidden imports, tiktoken fix, and freeze_support
 - [x] **PKG-06**: All bundled resources accessible via get_resource_path (sys._MEIPASS aware)
 
@@ -126,10 +126,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | KEY-05 | Phase 3 | Complete |
 | UI-04 | Phase 3 | Complete |
 | UI-05 | Phase 3 | Complete |
-| PKG-01 | Phase 4 | Pending |
+| PKG-01 | Phase 4 | Complete |
 | PKG-02 | Phase 4 | Pending |
 | PKG-03 | Phase 4 | Complete |
-| PKG-04 | Phase 4 | Pending |
+| PKG-04 | Phase 4 | Complete |
 | PKG-05 | Phase 4 | Complete |
 | PKG-06 | Phase 4 | Complete |
 
