@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Project skeleton, i18n infrastructure, ttkbootstrap window, and resource path abstraction (completed 2026-03-28)
 - [ ] **Phase 2: Core Transcription** - File queue, Whisper transcription, GPU detection, real-time log, and file output — full MVP loop
-- [ ] **Phase 3: Claude Cleanup + Settings** - "Přepsat + Upravit" path, API key management, settings panel, persistent preferences, and parallel workers
+- [x] **Phase 3: Claude Cleanup + Settings** - "Přepsat + Upravit" path, API key management, settings panel, persistent preferences, and parallel workers (completed 2026-03-29, Claude features marked experimental)
 - [ ] **Phase 4: Packaging** - PyInstaller portable folder builds for Windows and macOS, verified on clean machines with no Python installed
 
 ## Phase Details
@@ -63,25 +63,30 @@ Plans:
   4. User can skip API key setup and use "Přepsat" without Claude features working — no crash, no blocking dialog
   5. User can view and update or remove the API key from the settings panel
   6. Settings panel persists output folder, language choice, and parallel worker count between sessions
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 Plans:
 - [x] 03-01-PLAN.md — Settings infrastructure, Claude cleaner backend, i18n strings
 - [x] 03-02-PLAN.md — Settings dialog UI, API key banner, gear button, live language reload
 - [x] 03-03-PLAN.md — TranscriptionPanel extensions: Claude controls, context profiles, prompt editor, pipeline dispatch
-- [ ] 03-04-PLAN.md — Human verification: end-to-end Phase 3 flow
+- [x] 03-04-PLAN.md — Human verification: end-to-end Phase 3 flow (Claude features deferred as experimental)
 **UI hint**: yes
 
 ### Phase 4: Packaging
-**Goal**: A portable folder build exists for both Windows and macOS that runs correctly on a clean machine with no Python, no CUDA toolkit, and no system ffmpeg installed
+**Goal**: A Windows portable folder build exists that runs correctly on a clean machine with no Python, no CUDA toolkit, and no system ffmpeg installed — plus GitHub publication with README, LICENSE, and first-launch model download
 **Depends on**: Phase 3
 **Requirements**: PKG-01, PKG-02, PKG-03, PKG-04, PKG-05, PKG-06
 **Success Criteria** (what must be TRUE):
   1. Running the Windows portable folder on a clean Windows 10/11 machine (no Python, no CUDA toolkit) launches the app and completes a transcription successfully
-  2. Running the macOS portable folder on a clean Mac (Intel and Apple Silicon) launches the app and completes a transcription successfully
+  2. macOS build deferred per D-05 (requires Mac hardware, PyInstaller does not cross-compile)
   3. ffmpeg is found automatically by the app at startup — user does not need to install or configure it
-  4. The Whisper medium model loads correctly from inside the portable folder — no download prompt at runtime
-  5. API key storage (keyring) works in the frozen/packaged app on both platforms
-**Plans**: TBD
+  4. The Whisper medium model downloads on first launch with a progress dialog — no bundling required
+  5. API key storage (keyring) works in the frozen/packaged app on Windows
+**Plans:** 3 plans
+Plans:
+- [ ] 04-01-PLAN.md — Build infrastructure: model_path.py, PyInstaller spec, build script, ffmpeg PATH prepend
+- [ ] 04-02-PLAN.md — Model download dialog, i18n strings, main.py wiring, first build
+- [ ] 04-03-PLAN.md — Git publication (.gitignore, README, LICENSE), human verification of built app
+**UI hint**: yes
 
 ## Progress
 
@@ -93,4 +98,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Foundation | 1/1 | Complete   | 2026-03-28 |
 | 2. Core Transcription | 3/4 | In Progress|  |
 | 3. Claude Cleanup + Settings | 3/4 | In Progress|  |
-| 4. Packaging | 0/TBD | Not started | - |
+| 4. Packaging | 0/3 | Not started | - |
