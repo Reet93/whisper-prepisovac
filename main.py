@@ -24,27 +24,27 @@ def main() -> None:
     from src.whisperai.utils.model_path import is_model_downloaded
     if not is_model_downloaded():
         import ttkbootstrap as ttk
-        # Create a temporary root for the download dialog
-        dl_root = ttk.Window(
+        # Create root that will be reused by the app after download
+        root = ttk.Window(
             title=_("download.title"),
             themename="flatly",
             size=(400, 220),
             resizable=(False, False),
         )
-        dl_root.withdraw()  # hide until dialog is ready
+        root.withdraw()
 
         from src.whisperai.gui.model_download_dialog import ModelDownloadDialog
-        dialog = ModelDownloadDialog(dl_root)
-        dl_root.place_window_center()
-        dl_root.deiconify()
-        dl_root.wait_window(dialog)  # block until dialog closes
-        dl_root.destroy()
+        dialog = ModelDownloadDialog(root)
+        root.place_window_center()
+        root.deiconify()
+        root.wait_window(dialog)  # block until dialog closes
 
-        # If user cancelled and model still not present, warn but continue
-        # App will show error when trying to transcribe
-
-    from src.whisperai.app import create_app
-    create_app()
+        # Reuse the existing root — destroying it kills the Tk interpreter
+        from src.whisperai.app import create_app
+        create_app(existing_root=root)
+    else:
+        from src.whisperai.app import create_app
+        create_app()
 
 
 if __name__ == "__main__":
