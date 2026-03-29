@@ -18,7 +18,7 @@ def create_app() -> None:
     root = ttk.Window(
         title=_("app.title"),
         themename="flatly",
-        size=(720, 480),
+        size=(1080, 720),
         minsize=(480, 320),
         resizable=(True, True),
     )
