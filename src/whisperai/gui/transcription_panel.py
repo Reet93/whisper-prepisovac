@@ -242,23 +242,24 @@ class TranscriptionPanel:
         # Col 0: Context label
         ttk.Label(context_row, text=_("ui.action.context_label"), font=("", 9)).grid(row=0, column=0, padx=(0, 4))
 
-        # Col 1: Profile dropdown
-        self._combo_profile = ttk.Combobox(context_row, width=20, state="readonly")
+        # Col 1: Profile dropdown (disabled — experimental)
+        self._combo_profile = ttk.Combobox(context_row, width=20, state="disabled")
         self._combo_profile.grid(row=0, column=1, padx=(0, 4))
         self._combo_profile.bind("<<ComboboxSelected>>", self._on_profile_selected)
         self._refresh_profile_combo()
 
-        # Col 2: Profile manage button "..."
+        # Col 2: Profile manage button "..." (disabled — experimental)
         self._btn_manage_profile = ttk.Button(
             context_row, text="...", width=3,
             bootstyle="secondary",  # type: ignore[call-arg]
             command=self._on_manage_profile,
+            state="disabled",
         )
         self._btn_manage_profile.grid(row=0, column=2, padx=(0, 8))
 
-        # Col 3: Context text entry (expands)
+        # Col 3: Context text entry (disabled — experimental)
         self._context_var = tk.StringVar(value="")
-        self._entry_context = ttk.Entry(context_row, textvariable=self._context_var)
+        self._entry_context = ttk.Entry(context_row, textvariable=self._context_var, state="disabled")
         self._entry_context.grid(row=0, column=3, sticky="ew", padx=(0, 8))
 
         # Col 4: "Přepsat + Upravit" button
@@ -497,33 +498,10 @@ class TranscriptionPanel:
     # ------------------------------------------------------------------
 
     def _update_claude_button_states(self) -> None:
-        """Enable/disable Claude buttons based on API key, queue state, and running status."""
-        from src.whisperai.utils.settings import get_api_key
-        has_key = get_api_key() is not None
-        has_files = bool(self.tree.get_children())
-        has_done = any(
-            "done" in self.tree.item(iid, "tags")
-            for iid in self.tree.get_children()
-        )
-
-        if self._running:
-            self._btn_transcribe_edit.configure(state="disabled")
-            self._btn_edit_only.configure(state="disabled")
-            return
-
-        # "Přepsat + Upravit" — needs key and files
-        if has_key and has_files:
-            self._btn_transcribe_edit.configure(state="normal")
-        else:
-            self._btn_transcribe_edit.configure(state="disabled")
-            if not has_key and has_files:
-                ToolTip(self._btn_transcribe_edit, text=_("ui.action.no_key_tooltip"))
-
-        # "Upravit" — needs at least one done row
-        if has_done:
-            self._btn_edit_only.configure(state="normal")
-        else:
-            self._btn_edit_only.configure(state="disabled")
+        """Claude features disabled (experimental) — buttons always disabled."""
+        self._btn_transcribe_edit.configure(state="disabled")
+        self._btn_edit_only.configure(state="disabled")
+        self._btn_toggle_prompt.configure(state="disabled")
 
     def _refresh_profile_combo(self) -> None:
         """Reload the profile dropdown from settings."""

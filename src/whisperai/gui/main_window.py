@@ -4,7 +4,7 @@ from ttkbootstrap.constants import LEFT, RIGHT
 from ttkbootstrap.tooltip import ToolTip
 
 from src.whisperai.gui.transcription_panel import TranscriptionPanel
-from src.whisperai.utils.settings import SettingsStore, get_api_key
+from src.whisperai.utils.settings import SettingsStore
 
 
 class MainWindow:
@@ -68,21 +68,14 @@ class MainWindow:
         content_frame.rowconfigure(1, weight=1)
         self.content_frame = content_frame
 
-        # API key banner (per UI-SPEC section 2, D-10)
+        # Experimental feature banner (Claude cleanup coming soon)
         self._banner_frame = ttk.Frame(content_frame, bootstyle="warning")  # type: ignore[call-arg]
         self._lbl_banner = ttk.Label(
             self._banner_frame,
-            text=_("banner.no_key"),
+            text=_("banner.experimental"),
             foreground="#2C3E50",
         )
         self._lbl_banner.pack(side=LEFT, padx=(16, 0))
-        self._btn_banner_setup = ttk.Button(
-            self._banner_frame,
-            text=_("banner.setup"),
-            bootstyle="link",  # type: ignore[call-arg]
-            command=self._on_banner_setup,
-        )
-        self._btn_banner_setup.pack(side=LEFT, padx=8)
         self._btn_banner_dismiss = ttk.Button(
             self._banner_frame,
             text="\u00d7",
@@ -131,12 +124,8 @@ class MainWindow:
     # ------------------------------------------------------------------
 
     def _update_banner(self) -> None:
-        """Show or hide the API key banner based on key presence and dismiss state."""
+        """Show or hide the experimental feature banner."""
         if self._banner_dismissed:
-            self._banner_frame.grid_forget()
-            return
-        key = get_api_key()
-        if key:
             self._banner_frame.grid_forget()
         else:
             self._banner_frame.grid(row=0, column=0, sticky="ew", pady=(0, 4))
@@ -218,8 +207,7 @@ class MainWindow:
         self._lang_combo.configure(values=[_("ui.language_cs"), _("ui.language_en")])
 
         # Banner
-        self._lbl_banner.configure(text=_("banner.no_key"))
-        self._btn_banner_setup.configure(text=_("banner.setup"))
+        self._lbl_banner.configure(text=_("banner.experimental"))
 
         # Gear button tooltip (recreate tooltip)
         ToolTip(self._btn_settings, text=_("settings.tooltip"))

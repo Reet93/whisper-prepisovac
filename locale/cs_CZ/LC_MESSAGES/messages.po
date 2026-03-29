@@ -328,3 +328,9 @@ msgstr "claude-haiku-4-5 (rychlý/levný)"
 
 msgid "model.sonnet"
 msgstr "claude-sonnet-4-5 (vyvážený)"
+
+msgid "banner.experimental"
+msgstr "Čištění textu pomocí Claude AI — experimentální funkce, bude dostupná brzy"
+
+msgid "settings.claude_experimental"
+msgstr "⚠ Experimentální funkce — bude dostupná v budoucí verzi"

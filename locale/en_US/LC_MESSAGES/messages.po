@@ -328,3 +328,9 @@ msgstr "claude-haiku-4-5 (fast/cheap)"
 
 msgid "model.sonnet"
 msgstr "claude-sonnet-4-5 (balanced/quality)"
+
+msgid "banner.experimental"
+msgstr "Claude AI text cleanup — experimental feature, coming soon"
+
+msgid "settings.claude_experimental"
+msgstr "⚠ Experimental feature — coming in a future release"
