@@ -21,6 +21,7 @@ from ttkbootstrap.widgets.scrolled import ScrolledText
 from ttkbootstrap.tooltip import ToolTip
 
 from src.whisperai.utils.resource_path import get_resource_path
+from src.whisperai.utils.model_path import get_model_path
 
 
 def _format_filesize(size_bytes: int) -> str:
@@ -1064,7 +1065,7 @@ class TranscriptionPanel:
             return
         device_str = getattr(self.root, "_device_str", "cpu")
         worker_count = getattr(self.root, "_worker_count", 1)
-        model_path = str(get_resource_path("models"))
+        model_path = str(get_model_path())
 
         mp_queue = multiprocessing.Queue()
 
